@@ -185,7 +185,7 @@
   display: flex;
   align-items: center;
   gap: 18px;
-  color: rgba(107, 139, 182, .58);
+  color: #4f6f93;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: .28em;
@@ -196,7 +196,7 @@
   content: '';
   width: 48px;
   height: 1px;
-  background: rgba(107, 139, 182, .45);
+  background: rgba(79, 111, 147, .6);
 }
 
 @media (max-width: 1180px) {

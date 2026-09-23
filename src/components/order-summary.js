@@ -79,7 +79,7 @@ export function createOrderSummary({ catalogue, cart, announce, checkout }) {
   dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
   dialog.addEventListener('close', () => {
     bar.setAttribute('aria-expanded', 'false');
-    if (mobile.matches) bar.focus({ preventScroll: true });
+    if (mobile.matches && !bar.hidden) bar.focus({ preventScroll: true });
   });
 
   let totals = orderTotals([], language === 'vi' ? 'VND' : 'USD');
@@ -187,6 +187,7 @@ export function createOrderSummary({ catalogue, cart, announce, checkout }) {
     }
     empty.hidden = items.length > 0;
     list.hidden = !items.length;
+    bar.hidden = !items.length;
     totals = orderTotals(items, language === 'vi' ? 'VND' : 'USD');
     counts.replaceChildren(element('span', 'order-line-count', String(totals.lineCount)),
       document.createTextNode(language === 'vi' ? ' mã sản phẩm · ' : ` ${totals.lineCount === 1 ? 'product' : 'products'} · `),

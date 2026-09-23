@@ -114,6 +114,14 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   background-size: cover;
   background-position: center;
 }
+@media (max-width: 640px) {
+  /* Headline spans the full width on phones, so darken the whole photo evenly. */
+  .hero {
+    background-image:
+      linear-gradient(180deg, rgba(4,33,53,.84) 0%, rgba(4,33,53,.74) 100%),
+      url('../assets/theme/hyperion-hero-ship.png');
+  }
+}
 .hero-inner { min-height: 270px; }
 .hero h1 { color: #fff; }
 .hero-title-second { color: #c7ddea; }
@@ -160,6 +168,20 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   background: #edf3f7;
 }
 .configuration-step[data-state='locked'] .step-number { background: #728596; }
+/* Compact upcoming steps: the next locked step stays a card explaining what unlocks it;
+   later ones collapse to a quiet title row (message kept for screen readers). */
+.configuration-step[data-state='locked'] { min-height: 0; padding-block: 2px; border-color: transparent; background: transparent; box-shadow: none; }
+.configuration-step[data-state='locked'] .locked-message {
+  position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.configuration-step[data-state='locked']:first-child,
+.configuration-step:not([data-state='locked']) + .configuration-step[data-state='locked'] {
+  padding-block: 8px 12px; border-color: var(--hyperion-border-soft); background: #edf3f7;
+}
+.configuration-step[data-state='locked']:first-child .locked-message,
+.configuration-step:not([data-state='locked']) + .configuration-step[data-state='locked'] .locked-message {
+  position: static; width: auto; height: auto; margin: 0; overflow: visible; clip-path: none; white-space: normal;
+}
 
 /* Unified selected state across the current components. */
 .group-option[aria-pressed='true'],
@@ -239,12 +261,6 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   background: var(--hyperion-red-hover);
   border-color: var(--hyperion-red-hover);
 }
-.shipping-continue {
-  background: var(--hyperion-navy-950);
-  border-color: var(--hyperion-navy-950);
-  color: #fff;
-}
-.shipping-continue:hover { background: var(--hyperion-navy-800); }
 
 /* Sticky Order Summary: keep component behavior/placement/CTA intact. */
 .summary-shell {

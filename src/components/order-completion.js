@@ -57,12 +57,6 @@ export function createOrderCompletion(checkout) {
     field.append(caption, country?.root ?? input, error); form.append(field); inputs.set(key, { group, input, error });
   }
   shipping.content.append(form);
-  const continueButton = element('button', 'button shipping-continue', t('Continue to payment')); continueButton.type = 'button';
-  continueButton.addEventListener('click', () => {
-    for (const key of inputs.keys()) touched.add(key); const state = checkout.getState(); render(state);
-    const invalid = [...inputs].find(([key]) => state.errors[key]);
-    if (invalid) invalid[1].input.focus(); else { payment.fieldset.scrollIntoView({ block: 'start', behavior: 'smooth' }); amounts.get(state.order.payment.amountOption || 'full').focus(); }
-  }); shipping.content.append(continueButton);
 
   function choices(title, kind, options, onSelect) {
     const group = element('fieldset', `payment-choice-group payment-${kind}`);

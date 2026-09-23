@@ -22,3 +22,12 @@
   .hero h1 { font-size: clamp(30px, 7.6vw, 42px); letter-spacing: -.8px; }
   .eyebrow { margin-bottom: var(--space-3); }
 }
+.hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+.hero-action { min-height: 48px; border-radius: 6px; text-decoration: none; }
+.hero-action-secondary { border-color: rgb(255 255 255 / 55%); background: rgb(4 33 53 / 35%); color: #fff; }
+.hero-action-secondary:hover { border-color: #fff; background: rgb(255 255 255 / 12%); }
+.hero-action:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+@media (max-width: 640px) {
+  .hero-actions { margin-top: var(--space-5); }
+  .hero-action { flex: 1 1 100%; }
+}

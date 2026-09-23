@@ -46,6 +46,8 @@
   .toast { bottom: calc(100px + env(safe-area-inset-bottom)); }
   .shopping-layout { display: block; }
   .mobile-summary-bar { position: fixed; z-index: 22; inset: auto 0 0; display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 76px; padding: 12px max(16px, env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); border: 0; border-top: 1px solid var(--line); border-radius: 0; background: var(--navy); color: white; text-align: left; box-shadow: 0 -3px 12px rgb(8 34 56 / 12%); }
+  .mobile-summary-bar[hidden] { display: none; }
+  body:not(:has(.mobile-summary-bar:not([hidden]))) { padding-bottom: 0; }
   .mobile-summary-copy { flex: 1; min-width: 0; font-size: var(--text-xs); }
   .mobile-summary-copy > * { display: block; overflow-wrap: anywhere; }
   .mobile-summary-action { flex: 0 0 70px; font-size: var(--text-sm); font-weight: 600; text-align: right; }

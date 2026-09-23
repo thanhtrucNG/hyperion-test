@@ -10,7 +10,21 @@ export function createHero() {
   const title = element('h1', '', t('Marine safety signs'));
   title.id = 'hero-title';
   title.append(element('span', 'hero-title-second', t('for onboard safety, emergency response and wayfinding.')));
-  copy.append(eyebrow, title);
+  const actions = element('div', 'hero-actions');
+  const find = element('a', 'button button-primary hero-action', t('Find your sign'));
+  find.href = '#find-your-sign';
+  find.addEventListener('click', event => {
+    const target = document.querySelector('#find-your-sign');
+    if (!target) return;
+    event.preventDefault();
+    target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    history.replaceState(null, '', '#find-your-sign');
+  });
+  const catalogue = element('a', 'button hero-action hero-action-secondary', t('Download catalogue'));
+  catalogue.href = './assets/hyperion-catalogue-en.pdf';
+  catalogue.download = 'HYPERION-Marine-Safety-Signs-Catalogue.pdf';
+  actions.append(find, catalogue);
+  copy.append(eyebrow, title, actions);
 
   inner.append(copy);
   hero.append(inner);
