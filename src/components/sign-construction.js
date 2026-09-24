@@ -1,4 +1,4 @@
-const constructionVisualURL = new URL('../assets/sign-construction/sign-construction-visual.png', import.meta.url).href;
+const constructionVisualURL = new URL('../assets/products/hyperion/feature-visual.png', import.meta.url).href;
 import { element } from '../lib/dom.js';
 import { t } from '../lib/locale.js';
 

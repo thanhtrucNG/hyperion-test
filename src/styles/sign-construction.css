@@ -11,7 +11,7 @@
   min-height: 720px;
   padding: clamp(62px, 5.4vw, 88px) 0 clamp(76px, 6.4vw, 104px);
   background-color: #f8fbfe;
-  background-image: url('../assets/sign-construction/sign-construction-bg.png');
+  background-image: url('../assets/theme/theme-feature-sea.png');
   background-repeat: no-repeat;
   background-position: center bottom;
   background-size: cover;

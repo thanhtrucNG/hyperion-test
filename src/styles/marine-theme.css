@@ -50,7 +50,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   background-color: #eef8ff;
   background-image:
     linear-gradient(rgba(255,255,255,.12), rgba(255,255,255,.12)),
-    url('../assets/theme/hyperion-header-sky.png');
+    url('../assets/theme/theme-header-sky.png');
   background-size: cover;
   background-position: center;
   border-bottom: 2px solid var(--hyperion-red);
@@ -110,7 +110,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   background-color: var(--hyperion-navy-950);
   background-image:
     linear-gradient(90deg, rgba(4,33,53,.86) 0%, rgba(4,33,53,.70) 38%, rgba(4,33,53,.30) 68%, rgba(4,33,53,.08) 100%),
-    url('../assets/theme/hyperion-hero-ship.png');
+    url('../assets/products/hyperion/hero.png');
   background-size: cover;
   background-position: center;
 }
@@ -119,7 +119,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   .hero {
     background-image:
       linear-gradient(180deg, rgba(4,33,53,.84) 0%, rgba(4,33,53,.74) 100%),
-      url('../assets/theme/hyperion-hero-ship.png');
+      url('../assets/products/hyperion/hero.png');
   }
 }
 .hero-inner { min-height: 270px; }
@@ -270,7 +270,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   background-color: var(--hyperion-navy-950);
   background-image:
     linear-gradient(rgba(4,37,60,.34), rgba(4,37,60,.25)),
-    url('../assets/theme/hyperion-order-summary.png');
+    url('../assets/theme/theme-summary-ocean.png');
   background-size: cover;
   background-position: center bottom;
   box-shadow: 0 18px 38px rgb(7 39 62 / 18%);
@@ -279,7 +279,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   .summary-shell:has(.order-row:nth-child(4)) {
     background-image:
       linear-gradient(rgba(4,37,60,.32), rgba(4,37,60,.22)),
-      url('../assets/theme/hyperion-order-summary-tall.png');
+      url('../assets/theme/theme-summary-ocean-tall.png');
   }
 }
 .summary-header h3,
@@ -363,7 +363,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
       rgba(3,35,56,.89) 55%,
       rgba(3,35,56,.76) 100%
     ),
-    url('../assets/theme/hyperion-footer-ocean.png');
+    url('../assets/theme/theme-footer-ocean.png');
   background-size: cover;
   background-position: center;
   color: #d5e0e7;
@@ -372,7 +372,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
 @media (max-width: 999px) {
   .header-nav-links {
     background-color: rgba(255,255,255,.97);
-    background-image: linear-gradient(rgba(255,255,255,.12), rgba(255,255,255,.12)), url('../assets/theme/hyperion-header-sky.png');
+    background-image: linear-gradient(rgba(255,255,255,.12), rgba(255,255,255,.12)), url('../assets/theme/theme-header-sky.png');
     background-size: cover;
     border-color: var(--hyperion-border);
   }
@@ -382,6 +382,6 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   .summary-shell {
     background-image:
       linear-gradient(rgba(4,37,60,.34), rgba(4,37,60,.25)),
-      url('../assets/theme/hyperion-order-summary-tall.png');
+      url('../assets/theme/theme-summary-ocean-tall.png');
   }
 }

@@ -3,6 +3,7 @@ import { createSearchResult } from './search-result.js';
 import { language, t } from '../lib/locale.js';
 import { getProductName } from '../lib/storefront.js';
 import { groupSearchResults } from '../lib/search-presentation.js';
+import { scrollToElement } from '../lib/scroll.js';
 
 const PAGE_SIZE = 8;
 
@@ -127,7 +128,7 @@ export function createProductSearch(catalogue, cart, announce) {
   window.addEventListener('popstate', () => { input.value = new URLSearchParams(location.search).get('q') ?? ''; runSearch(false); });
   window.addEventListener('hyperion:lookup', event => {
     if (!catalogue.getById(event.detail)) return;
-    input.value = event.detail; runSearch(); input.focus({ preventScroll: true }); section.scrollIntoView({ block: 'start' });
+    input.value = event.detail; runSearch(); input.focus({ preventScroll: true }); scrollToElement(section);
   });
   input.value = new URLSearchParams(location.search).get('q') ?? '';
   runSearch(false);

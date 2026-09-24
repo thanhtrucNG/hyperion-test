@@ -66,7 +66,7 @@ export function createFooter() {
 
   inner.append(
     columns,
-    element('p', 'footer-copyright', `© 2026 DLV Corporation. ${t('All rights reserved.')}`),
+    element('p', 'footer-copyright', `© ${new Date().getFullYear()} DLV Corporation. ${t('All rights reserved.')}`),
   );
   footer.append(inner);
   return footer;

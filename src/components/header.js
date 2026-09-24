@@ -1,12 +1,10 @@
 import { element } from '../lib/dom.js';
 import { language, t } from '../lib/locale.js';
 import { createContactSalesModal } from './contact-sales.js';
+import { scrollToElement } from '../lib/scroll.js';
 
 function scrollToSection(href) {
-  const target = document.querySelector(href);
-  if (!target) return;
-  const behavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-  target.scrollIntoView({ behavior, block: 'start' });
+  scrollToElement(document.querySelector(href));
 }
 
 export function createHeader() {

@@ -1,5 +1,6 @@
 import { element } from '../lib/dom.js';
 import { t } from '../lib/locale.js';
+import { scrollToElement } from '../lib/scroll.js';
 
 export function createHero() {
   const hero = element('section', 'hero');
@@ -17,7 +18,7 @@ export function createHero() {
     const target = document.querySelector('#find-your-sign');
     if (!target) return;
     event.preventDefault();
-    target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    scrollToElement(target);
     history.replaceState(null, '', '#find-your-sign');
   });
   const catalogue = element('a', 'button hero-action hero-action-secondary', t('Download catalogue'));

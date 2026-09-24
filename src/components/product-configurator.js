@@ -1,6 +1,7 @@
 import { element, icon } from '../lib/dom.js';
 import { language, t } from '../lib/locale.js';
 import { createProgressiveFlow } from '../configurator/progressive-flow.js';
+import { scrollToElement } from '../lib/scroll.js';
 import { createConfiguratorStep, describeOption } from './configurator-step.js';
 import { createEditionPurchase } from './edition-purchase.js';
 import { createSizeMatrix } from './size-matrix.js';
@@ -94,7 +95,7 @@ export function createProductConfigurator(families, taxonomy, catalogue, mapping
     } else if (next) {
       next.focus({ preventScroll: true });
       const bounds = next.getBoundingClientRect();
-      if (bounds.top < 110 || bounds.bottom > innerHeight - 100) next.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+      if (bounds.top < 110 || bounds.bottom > innerHeight - 100) scrollToElement(next.closest('fieldset'));
     }
   }
   engine.subscribe(state => {
@@ -163,6 +164,6 @@ export function createProductConfigurator(families, taxonomy, catalogue, mapping
     history.replaceState(null, '', url);
   });
   reset.addEventListener('click', () => { stepStates.clear(); try { session?.removeItem(CONFIG_STATE_KEY); } catch {} engine.reset(); buttons.values().next().value?.focus(); });
-  window.addEventListener('hyperion:configure', event => { if (buttons.has(event.detail)) { select('customer_category_id', event.detail); section.scrollIntoView({ block: 'start' }); } });
+  window.addEventListener('hyperion:configure', event => { if (buttons.has(event.detail)) { select('customer_category_id', event.detail); scrollToElement(section); } });
   return section;
 }

@@ -4,6 +4,7 @@ import { formatPrice } from '../lib/storefront.js';
 import { orderTotals } from '../cart/order-totals.js';
 import { createOrderRow } from './order-row.js';
 import { createPaymentSummary } from './order-completion.js';
+import { scrollToElement } from '../lib/scroll.js';
 
 export function createOrderSummary({ catalogue, cart, announce, checkout }) {
   const root = element('aside', 'order-summary');
@@ -67,7 +68,7 @@ export function createOrderSummary({ catalogue, cart, announce, checkout }) {
   function open() {
     if (!mobile.matches) {
       heading.focus({ preventScroll: true });
-      shell.scrollIntoView({ block: 'start', behavior: 'auto' });
+      scrollToElement(shell);
       return;
     }
     if (!dialog.open) dialog.showModal();
@@ -104,27 +105,7 @@ export function createOrderSummary({ catalogue, cart, announce, checkout }) {
     return visible >= threshold;
   }
   function smoothScrollToTarget(target) {
-    const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height ?? 0;
-    const startY = window.scrollY;
-    const targetY = Math.max(0, startY + target.getBoundingClientRect().top - headerHeight - 18);
-    const distance = targetY - startY;
-    if (Math.abs(distance) < 2) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      window.scrollTo(0, targetY);
-      return;
-    }
-    const duration = Math.min(760, Math.max(460, Math.abs(distance) * 0.34));
-    const startedAt = performance.now();
-    const easeInOutCubic = progress => progress < .5
-      ? 4 * progress * progress * progress
-      : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-    function frame(now) {
-      const progress = Math.min(1, (now - startedAt) / duration);
-      window.scrollTo(0, startY + distance * easeInOutCubic(progress));
-      if (progress < 1) requestAnimationFrame(frame);
-      else refreshNextActionVisibility();
-    }
-    requestAnimationFrame(frame);
+    scrollToElement(target, { onDone: refreshNextActionVisibility });
   }
   function refreshNextActionVisibility() {
     if (visibilityFrame) cancelAnimationFrame(visibilityFrame);
