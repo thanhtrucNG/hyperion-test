@@ -68,7 +68,7 @@
 .payment-confirmation > p { margin-top: 14px; }
 .bank-qr { max-width: 220px; margin-top: 16px; }
 .transfer-reference { display: grid; gap: 8px; }
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
   .shipping-fields, .payment-choices, .payment-methods .payment-choices { grid-template-columns: 1fr; }
   .shipping-field-wide { grid-column: auto; }
   .payment-group-hint { display: block; float: none; line-height: 1.5; margin-top: 4px; }
@@ -116,7 +116,7 @@
 .zalopay-gateway-logo { width: min(150px, 52%); height: auto; object-fit: contain; }
 .bank-modal-no-qr { grid-template-columns: 1fr; }
 .bank-modal-no-qr .bank-modal-qr { display: none; }
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
   .payment-modal { padding: 16px; }
   .bank-modal-layout { grid-template-columns: 1fr; gap: 16px; }
   .bank-modal-qr { width: 160px; justify-self: center; }
@@ -132,7 +132,7 @@
 .bank-copy-button:hover { border-color: #ff947d; background: #214763; }
 .bank-copy-status { min-height: 20px; margin: 2px 0 0; color: #d2dfe8; font-size: var(--text-sm); }
 .bank-copy-status:empty { visibility: hidden; }
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
   .bank-payment-details > div { align-items: flex-start; }
   .bank-payment-details dd { max-width: 60%; }
   .bank-copy-value { justify-content: flex-end; }
@@ -315,7 +315,7 @@
   justify-self: start;
   border-radius: 8px;
 }
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
   .payment-modal[data-payment-method='card'] {
     width: min(100% - 20px, 810px);
     padding: 22px 18px 20px;

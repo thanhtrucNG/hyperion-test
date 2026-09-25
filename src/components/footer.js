@@ -46,9 +46,11 @@ export function createFooter() {
     detail.href = href;
     if (href.startsWith('https:')) { detail.target = '_blank'; detail.rel = 'noopener'; }
     if (name === 'pin') {
-      // Two deliberate lines, broken after the ward: "29 …, <ward>," / "<city>, <country>" — never an arbitrary wrap.
+      // One line wherever it fits. Phones are too narrow for any address line, so there it breaks only
+      // between its natural parts — street / ward / city, country — and never inside one.
       const parts = value.split(', ');
-      detail.replaceChildren(element('span', 'address-line', `${parts.slice(0, 2).join(', ')},`), element('span', 'address-line', parts.slice(2).join(', ')));
+      const lines = [`${parts[0]},`, `${parts[1]},`, parts.slice(2).join(', ')];
+      detail.replaceChildren(...lines.flatMap((text, i) => [...(i ? [document.createTextNode(' ')] : []), element('span', 'address-line', text)]));
     }
     body.append(detail);
     if (name === 'phone') {

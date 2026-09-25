@@ -83,7 +83,7 @@ export function createHeader() {
   toggle.setAttribute('aria-controls', links.id);
   toggle.setAttribute('aria-expanded', 'false');
 
-  const narrow = matchMedia('(max-width: 1023px)');
+  const narrow = matchMedia('(max-width: 1023.98px)');
 
   function close() {
     mobileSales.close();

@@ -23,7 +23,7 @@
   .edition-purchase .edition-identity { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
   .edition-purchase .product-image { height: 240px; }
 }
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
   .edition-purchase .product-image { height: 220px; }
   .edition-controls { gap: var(--space-3); }
 }

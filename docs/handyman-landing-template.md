@@ -225,7 +225,7 @@ Every call-to-action button shows its text **in capitals**, in both languages.
    - number + unit: `150 × 150 mm`, `2 units`, `US$5`, `130.000 ₫`
    - phone numbers `(+84) 347 099 905`, emails, IMPA/ISSA codes, barcodes, tax code
    - brand + product: `HYPERION by DLV Corporation` may break only before `by`
-3. Company legal names and the footer address MUST render on one line at ≥ 1296px (see §10).
+3. **One item of information = one line.** A company name, address, phone number, email, price, code, label or button text MUST NOT be split across lines anywhere the screen could fit it. Never insert manual line breaks inside an item (no `<br>`, no forced two-line split). If a layout would make such an item wrap, change the layout instead (stack or widen columns) — e.g. the footer stacks below 1280px so the address stays on one line. Only where no layout can fit it (phones, < 768px) may a long item break, and then **only between its natural parts** (address: street / ward / city, country), each part kept whole with `white-space: nowrap`.
 4. Hero H1: the break between line 1 and line 2 is a **forced** break (two elements). Each line MUST NOT itself wrap at ≥ 1024px — shorten the copy if it does.
 5. Body line length: max **640px** (`max-width: 640px` on intro paragraphs).
 6. No hyphenation (`hyphens: manual`). Vietnamese words break only at spaces. Use `overflow-wrap: anywhere` **only** for codes/URLs inside narrow cards.
@@ -250,7 +250,7 @@ Every call-to-action button shows its text **in capitals**, in both languages.
 | Laptop | 1024 – 1279px | 1024, 1180 |
 | Desktop | ≥ 1280px | 1280, 1440, 1920 |
 
-Media queries use only these three boundaries, written either mobile-first (`min-width: 768px / 1024px / 1280px`) or desktop-first with the matching maximums (`max-width: 767px / 1023px / 1279px`), plus the one footer rule at `min-width: 1296px` (§10). The same values apply to `matchMedia()` in JavaScript. `@container` queries (a component reacting to its own width) are allowed and do not count as breakpoints.
+Media queries use only these three boundaries, written either mobile-first (`min-width: 768px / 1024px / 1280px`) or desktop-first with the matching maximums (`max-width: 767px / 1023px / 1279px`), plus the one footer rule at `min-width: 1296px` (§10). The same values apply to `matchMedia()` in JavaScript. `@container` queries (a component reacting to its own width) are allowed and do not count as breakpoints. **Every `max-width` value ends in `.98`** (`767.98px`, `1023.98px`, `1279.98px`), in CSS and in `matchMedia()`: on screens with display scaling (e.g. 150 %) the viewport can be a fraction like 1279.3px, which falls in the gap between `max-width: 1279px` and `min-width: 1280px` so neither layout applies.
 
 ### 6.3 Page grid
 
@@ -438,7 +438,7 @@ CONTACT
 ```
 
 - Source of truth: `src/data/corporate.js`. Agents MUST NOT retype these strings elsewhere.
-- Company legal names: single line at ≥ 1296px (`white-space: nowrap`), wrap below. Address: always two fixed lines, broken after the ward ("29 …, Tan Thuan Ward," / "Ho Chi Minh City, Vietnam"), each line unbroken at ≥ 1296px.
+- Company name, address, phone, email: **one line each from 768px up** (`white-space: nowrap`; the column layout guarantees the room: 3 columns ≥ 1280px, brand row + About us | Contact at 1024–1279px, stacked below 1024px). On phones the address breaks only between street / ward / city, country — three whole lines.
 - VI page shows the Vietnamese address (`corporate.address_vi`); the map link always searches the English address.
 - The year is computed at build/runtime, never hard-coded (**Hyperion deviation:** currently hard-coded `2026`).
 
@@ -457,7 +457,7 @@ CONTACT
 | Payment amount (full / deposit) | 1 column | 2 columns | 2 columns |
 | Payment methods | 1 column | 1 column | 1 column |
 | Order summary | Bottom bar → sheet | Sticky 280px | Sticky 320 / 360px |
-| Footer | 1 column | brand row + 2 columns | 3 columns |
+| Footer | 1 column (address on 3 whole lines) | 1 column | 1024–1279: brand row, then About us and Contact side by side · ≥ 1280: 3 columns |
 
 - No horizontal scrolling at any width ≥ 360px (`document.documentElement.scrollWidth === innerWidth`).
 - Sticky elements must never cover a focused input (`scroll-padding-top: header + 20px`, `scroll-padding-bottom: 100px` on mobile).
@@ -648,6 +648,8 @@ Country MUST sit directly before City / Province (same row on desktop/tablet: Co
 - [ ] Every UI string has a Vietnamese translation; `?lang=vi` renders with VND prices.
 - [ ] Footer copy is byte-identical to §10; year is dynamic.
 - [ ] No orphan words in headings at 1440 / 1024 / 390px; units, phones, codes never split.
+- [ ] One item = one line (§5.4 rule 3): measure the line count of the address, company name, phone, email and every button at 1440, 1280, 1279, 1100, 1024, 1023, 768, 767, 390 and 360px in EN and VI — 1 line everywhere from 768px up; on phones the address breaks only between its parts. Also proofread every visible string for typos and stray breaks before hand-off.
+- [ ] Breakpoints: no `max-width` without `.98`; test once at a fractional width (browser zoom or 150 % display scaling) that the layout changes exactly at 768 / 1024 / 1280.
 - [ ] Hero H1 lines don't wrap at ≥ 1024px.
 - [ ] No horizontal scroll at 360, 390, 768, 1024, 1280, 1440px.
 - [ ] Screenshots of every section at 1440px and 390px attached.

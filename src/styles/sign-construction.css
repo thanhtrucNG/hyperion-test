@@ -198,7 +198,7 @@
   background: rgba(79, 111, 147, .6);
 }
 
-@media (max-width: 1279px) {
+@media (max-width: 1279.98px) {
   .sign-construction-inner {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: 48px;
@@ -216,7 +216,7 @@
   .sign-construction-progress { display: none; }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1023.98px) {
   .sign-construction {
     padding-block: 64px;
     background-position: center bottom;
@@ -256,7 +256,7 @@
   .sign-construction-visual-image { width: min(100%, 540px); }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
   .sign-construction {
     padding-block: 48px;
     background-size: auto 100%;

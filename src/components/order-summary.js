@@ -58,7 +58,7 @@ export function createOrderSummary({ catalogue, cart, announce, checkout }) {
   barCopy.append(barLabel, barAmount);
   bar.append(icon('cart'), barCopy, barAction);
   root.append(slot, dialog, bar);
-  const mobile = matchMedia('(max-width: 767px)');
+  const mobile = matchMedia('(max-width: 767.98px)');
   function placeSummary() {
     if (!mobile.matches && dialog.open) dialog.close();
     (mobile.matches ? dialog : slot).append(shell);

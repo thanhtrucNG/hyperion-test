@@ -20,8 +20,8 @@
 .group-option[aria-pressed='true'] .group-marker .icon { visibility: visible; }
 .group-description { color: var(--muted); font-size: var(--text-sm); line-height: 1.5; }
 .selection-status { min-height: 48px; padding-block: var(--space-4); color: var(--navy); font-size: var(--text-sm); }
-@media (max-width: 1023px) { .group-option { padding: var(--space-4); } .group-selector { padding: var(--space-4); } }
-@media (max-width: 767px) {
+@media (max-width: 1023.98px) { .group-option { padding: var(--space-4); } .group-selector { padding: var(--space-4); } }
+@media (max-width: 767.98px) {
   .configurator-heading { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
   .group-options { grid-template-columns: 1fr; }
   .group-option { gap: var(--space-2); }

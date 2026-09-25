@@ -37,11 +37,11 @@
   .configurator-main .group-name { font-size: var(--text-base); }
   .configurator-main .group-options { gap: var(--space-2); }
 }
-@media (max-width: 1279px) { .shopping-layout { grid-template-columns: minmax(0, 1fr) 320px; } }
-@media (max-width: 1023px) {
+@media (max-width: 1279.98px) { .shopping-layout { grid-template-columns: minmax(0, 1fr) 320px; } }
+@media (max-width: 1023.98px) {
   .shopping-layout { grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; }
 }
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
   body { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
   html { scroll-padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
   .toast { bottom: calc(100px + env(safe-area-inset-bottom)); }
@@ -60,7 +60,7 @@
   .order-row-identity { grid-template-columns: 40px minmax(0, 1fr); }
   .order-totals { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
 }
-@media (max-width: 767px) { .shopping-layout { margin-top: -24px; } }
+@media (max-width: 767.98px) { .shopping-layout { margin-top: -24px; } }
 @container (max-width: 620px) {
   .configurator-heading { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
 }

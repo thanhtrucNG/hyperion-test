@@ -22,9 +22,10 @@
   border-left: 1px solid rgba(255,255,255,.12);
 }
 
-/* The address is two fixed lines; each line stays unbroken at full container width. */
-.address-line { display: block; }
-@media (min-width: 1296px) {
+/* One piece of information = one line: company name, address, phone and email never wrap from 768px up
+   (the layout below guarantees the room). On phones the address breaks only between street / ward / city. */
+.address-line { display: inline; }
+@media (min-width: 768px) {
   .footer-legal,
   a.contact-value {
     white-space: nowrap;
@@ -190,15 +191,15 @@ a.contact-chat-link:focus-visible {
   text-align: center;
 }
 
-@media (max-width: 1023px) {
+/* 1024–1279px: brand across the top, About us | Contact below, so the address keeps one line. */
+@media (max-width: 1279.98px) {
   .footer-columns {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 28px 32px;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 28px 48px;
   }
 
   .footer-brand {
     grid-column: 1 / -1;
-    max-width: none;
   }
 
   .footer-columns > * + * {
@@ -207,16 +208,13 @@ a.contact-chat-link:focus-visible {
   }
 
   .footer-columns > .footer-contact {
-    padding-left: 32px;
+    padding-left: 48px;
     border-left: 1px solid rgba(255,255,255,.12);
   }
 }
 
-@media (max-width: 767px) {
-  .footer-inner {
-    padding-block: 32px 16px;
-  }
-
+/* Below 1024px: one column, so every line has the full width. */
+@media (max-width: 1023.98px) {
   .footer-columns {
     grid-template-columns: 1fr;
     gap: 24px;
@@ -232,4 +230,12 @@ a.contact-chat-link:focus-visible {
     padding-top: 20px;
     border-top: 1px solid rgba(255,255,255,.12);
   }
+}
+
+@media (max-width: 767.98px) {
+  .footer-inner {
+    padding-block: 32px 16px;
+  }
+
+  .address-line { display: block; white-space: nowrap; }
 }

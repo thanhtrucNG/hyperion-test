@@ -28,7 +28,7 @@ export function createProductSearch(catalogue, cart, announce) {
   input.autocomplete = 'off';
   input.spellcheck = false;
   const guidance = t('Search by IMPA, ISSA, barcode or product name');
-  const narrow = matchMedia('(max-width: 767px)');
+  const narrow = matchMedia('(max-width: 767.98px)');
   const setPlaceholder = () => { input.placeholder = narrow.matches ? t('IMPA, ISSA, barcode or name') : guidance; };
   setPlaceholder();
   narrow.addEventListener('change', setPlaceholder);
