@@ -1,10 +1,10 @@
 import { element } from '../lib/dom.js';
 import { language, t } from '../lib/locale.js';
-import { createContactSalesModal } from './contact-sales.js';
+import { createContactSales } from './contact-options.js';
 import { scrollToElement } from '../lib/scroll.js';
 
 function scrollToSection(href) {
-  scrollToElement(document.querySelector(href));
+  scrollToElement(document.querySelector(href), { focus: true });
 }
 
 export function createHeader() {
@@ -13,7 +13,7 @@ export function createHeader() {
   const inner = element('div', 'container header-inner');
   const brand = element('a', 'brand');
   brand.href = './';
-  brand.setAttribute('aria-label', 'Handyman home');
+  brand.setAttribute('aria-label', t('Handyman home'));
 
   const logo = element('img', 'brand-logo');
   logo.src = `${baseURL}assets/handyman-logo.png`;
@@ -21,14 +21,6 @@ export function createHeader() {
   logo.width = 584;
   logo.height = 143;
   brand.append(logo);
-
-  let storage;
-  try {
-    storage = window.sessionStorage;
-  } catch {
-    /* Header remains usable without storage. */
-  }
-  const contactModal = createContactSalesModal(storage);
 
   const nav = element('nav', 'header-actions');
   nav.setAttribute('aria-label', t('Menu'));
@@ -60,13 +52,9 @@ export function createHeader() {
   catalogue.download = 'HYPERION-Marine-Safety-Signs-Catalogue.pdf';
   links.append(catalogue);
 
-  const mobileSales = element('button', 'header-contact-sales header-contact-sales--menu', t('CONTACT SALES'));
-  mobileSales.type = 'button';
-  mobileSales.addEventListener('click', () => {
-    close();
-    contactModal.open(mobileSales);
-  });
-  links.append(mobileSales);
+  // Contact sales opens the three direct contact options (phone, WhatsApp, Zalo) — no form.
+  const mobileSales = createContactSales({ id: 'contact-options-menu', variant: 'menu', baseURL, onPick: () => close() });
+  links.append(mobileSales.element);
 
   const locales = element('div', 'language-switch');
   locales.setAttribute('aria-label', 'Language / Ngôn ngữ');
@@ -88,18 +76,17 @@ export function createHeader() {
     locales.append(button);
   }
 
-  const desktopSales = element('button', 'header-contact-sales header-contact-sales--desktop', t('CONTACT SALES'));
-  desktopSales.type = 'button';
-  desktopSales.addEventListener('click', () => contactModal.open(desktopSales));
+  const desktopSales = createContactSales({ id: 'contact-options-desktop', variant: 'desktop', baseURL });
 
   const toggle = element('button', 'header-menu', t('Menu'));
   toggle.type = 'button';
   toggle.setAttribute('aria-controls', links.id);
   toggle.setAttribute('aria-expanded', 'false');
 
-  const narrow = matchMedia('(max-width: 999px)');
+  const narrow = matchMedia('(max-width: 1023px)');
 
   function close() {
+    mobileSales.close();
     links.hidden = narrow.matches;
     toggle.hidden = !narrow.matches;
     toggle.setAttribute('aria-expanded', 'false');
@@ -115,7 +102,7 @@ export function createHeader() {
   });
 
   header.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && narrow.matches && !contactModal.element.open) {
+    if (event.key === 'Escape' && narrow.matches) {
       close();
       toggle.focus();
     }
@@ -124,8 +111,8 @@ export function createHeader() {
   narrow.addEventListener('change', close);
   close();
 
-  nav.append(links, locales, desktopSales, toggle);
+  nav.append(links, locales, desktopSales.element, toggle);
   inner.append(brand, nav);
-  header.append(inner, contactModal.element);
+  header.append(inner);
   return header;
 }

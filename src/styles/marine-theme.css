@@ -114,7 +114,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   background-size: cover;
   background-position: center;
 }
-@media (max-width: 640px) {
+@media (max-width: 767px) {
   /* Headline spans the full width on phones, so darken the whole photo evenly. */
   .hero {
     background-image:
@@ -122,7 +122,9 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
       url('../assets/products/hyperion/hero.png');
   }
 }
-.hero-inner { min-height: 270px; }
+.hero-inner { min-height: 400px; }
+@media (max-width: 1023px) { .hero-inner { min-height: 360px; } }
+@media (max-width: 767px) { .hero-inner { min-height: 0; } }
 .hero h1 { color: #fff; }
 .hero-title-second { color: #c7ddea; }
 .eyebrow { color: #ffc0b3; }
@@ -137,8 +139,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
 .group-selector,
 .configuration-step,
 .result-card,
-.search-empty,
-.contact-sales-card {
+.search-empty {
   background: rgba(255,255,255,.96);
   border-color: var(--hyperion-border-soft);
   border-radius: 8px;
@@ -216,18 +217,14 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
 .search-field,
 .concept-filter,
 .shipping-field input,
-.transfer-reference input,
-.contact-sales-field input,
-.contact-sales-field textarea {
+.transfer-reference input {
   border-color: #9fb6c7;
   border-radius: 4px;
   background: #fff;
 }
 .search-field:focus-within,
 .shipping-field input:focus,
-.transfer-reference input:focus,
-.contact-sales-field input:focus,
-.contact-sales-field textarea:focus {
+.transfer-reference input:focus {
   border-color: var(--hyperion-navy-800);
   outline: none;
   box-shadow: 0 0 0 3px rgb(13 58 90 / 8%);
@@ -247,8 +244,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
 .button-primary,
 .search-submit,
 .add-to-cart,
-.payment-cta,
-.contact-sales-submit {
+.payment-cta {
   background: var(--hyperion-red);
   border-color: var(--hyperion-red);
   color: #fff;
@@ -256,8 +252,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
 .button-primary:hover,
 .search-submit:hover,
 .add-to-cart:hover:not(:disabled),
-.payment-cta:hover:not(:disabled),
-.contact-sales-submit:hover {
+.payment-cta:hover:not(:disabled) {
   background: var(--hyperion-red-hover);
   border-color: var(--hyperion-red-hover);
 }
@@ -334,17 +329,8 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
 .country-option:hover,
 .country-option[aria-selected='true'] { background: var(--hyperion-red-soft); }
 
-/* Existing modals/CONTACT SALES are not in every mockup; retain them and theme them. */
-.contact-sales-modal::backdrop,
+/* Payment modal theming. */
 .payment-modal::backdrop { background: rgb(3 19 33 / 74%); }
-.contact-sales-card {
-  border-top-color: var(--hyperion-red);
-  border-radius: 10px;
-}
-.contact-sales-close {
-  border-color: var(--hyperion-border);
-  color: var(--hyperion-navy-950);
-}
 .payment-modal {
   border-color: #446078;
   border-top-color: var(--hyperion-red);
@@ -369,7 +355,7 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
   color: #d5e0e7;
 }
 
-@media (max-width: 999px) {
+@media (max-width: 1023px) {
   .header-nav-links {
     background-color: rgba(255,255,255,.97);
     background-image: linear-gradient(rgba(255,255,255,.12), rgba(255,255,255,.12)), url('../assets/theme/theme-header-sky.png');
@@ -384,4 +370,19 @@ h1, h2, h3 { color: var(--hyperion-navy-950); }
       linear-gradient(rgba(4,37,60,.34), rgba(4,37,60,.25)),
       url('../assets/theme/theme-summary-ocean-tall.png');
   }
+}
+
+/* CTA buttons: text always in capitals, EN and VI (template §5.3). Labels stay sentence case in locale.js. */
+.button,
+.header-contact-sales,
+.header-menu,
+.configurator-reset,
+.summary-close,
+a.contact-chat-link,
+.mobile-summary-action {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }

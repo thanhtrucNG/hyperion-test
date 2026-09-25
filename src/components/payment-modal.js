@@ -117,7 +117,7 @@ export function createPaymentModal(checkout) {
           detailRow('Account name', bank?.accountName),
           detailRow('Account number', bank?.accountNumber, 'Copy account number'),
           detailRow('Bank', bank?.bankName),
-          detailRow('Transfer method', bank?.method),
+          detailRow('Transfer method', bank?.method ? t(bank.method) : bank?.method),
           detailRow('Transfer content', bank?.transferContent, 'Copy transfer content'),
         );
       };

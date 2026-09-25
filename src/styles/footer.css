@@ -6,7 +6,7 @@
 
 /* Aligns with the page's .container so the footer lines up with the content above. */
 .footer-inner {
-  padding-block: 40px 20px;
+  padding-block: 40px 16px;
 }
 
 /* Columns size to their content so the brand column stays narrow and
@@ -24,7 +24,9 @@
   border-left: 1px solid rgba(255,255,255,.12);
 }
 
-/* At full container width (1200px) every line fits unbroken. */
+/* At full container width (1200px) the legal names stay on one line; the address is two fixed lines. */
+.footer-brand { max-width: 200px; }
+.address-line { display: block; }
 @media (min-width: 1296px) {
   .footer-legal,
   a.contact-value {
@@ -158,8 +160,8 @@ a.contact-value:hover {
 a.contact-chat-link {
   display: inline-flex;
   align-items: center;
-  min-height: 24px;
-  padding: 2px 10px;
+  min-height: 32px;
+  padding: 0 12px;
   border: 1px solid rgba(255,255,255,.28);
   border-radius: 999px;
   color: #fff;
@@ -199,6 +201,7 @@ a.contact-chat-link:focus-visible {
 
   .footer-brand {
     grid-column: 1 / -1;
+    max-width: none;
   }
 
   .footer-columns > * + * {
@@ -212,9 +215,9 @@ a.contact-chat-link:focus-visible {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 767px) {
   .footer-inner {
-    padding-block: 32px 20px;
+    padding-block: 32px 16px;
   }
 
   .footer-columns {
@@ -231,10 +234,5 @@ a.contact-chat-link:focus-visible {
   .footer-columns > .footer-contact {
     padding-top: 20px;
     border-top: 1px solid rgba(255,255,255,.12);
-  }
-
-  a.contact-chat-link {
-    min-height: 32px;
-    padding: 4px 12px;
   }
 }

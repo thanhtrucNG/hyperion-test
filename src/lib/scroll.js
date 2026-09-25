@@ -12,8 +12,21 @@ function stop() {
   removeEventListener('keydown', stop);
 }
 
-export function scrollToElement(target, { onDone } = {}) {
+// Keyboard/screen-reader users land where the page lands: an input or button target keeps focus itself,
+// otherwise the section's first heading (or legend) receives it without a second scroll.
+function focusDestination(target) {
+  const focusable = target.matches('input, select, textarea, button, a[href]') ? target
+    : target.querySelector('h1, h2, h3, legend') ?? target;
+  if (!focusable.matches('input, select, textarea, button, a[href], [tabindex]')) focusable.tabIndex = -1;
+  focusable.focus({ preventScroll: true });
+}
+
+export function scrollToElement(target, { onDone, focus = false } = {}) {
   if (!target) return;
+  if (focus) {
+    const done = onDone;
+    onDone = () => { focusDestination(target); done?.(); };
+  }
   stop();
   const headerBottom = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
   const startY = scrollY;

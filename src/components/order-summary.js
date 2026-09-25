@@ -1,5 +1,5 @@
 import { element, icon } from '../lib/dom.js';
-import { language, t } from '../lib/locale.js';
+import { language, t, tn } from '../lib/locale.js';
 import { formatPrice } from '../lib/storefront.js';
 import { orderTotals } from '../cart/order-totals.js';
 import { createOrderRow } from './order-row.js';
@@ -85,9 +85,7 @@ export function createOrderSummary({ catalogue, cart, announce, checkout }) {
 
   let totals = orderTotals([], language === 'vi' ? 'VND' : 'USD');
   const rows = new Map();
-  const countText = value => language === 'vi'
-    ? `${value.lineCount} mã sản phẩm · ${value.quantity} đơn vị`
-    : `${value.lineCount} ${value.lineCount === 1 ? 'product' : 'products'} · ${value.quantity} ${value.quantity === 1 ? 'unit' : 'units'}`;
+  const countText = value => `${tn(value.lineCount, '{n} product', '{n} products')} · ${tn(value.quantity, '{n} unit', '{n} units')}`;
 
   let actionTargetSelector = null;
   let actionVisible = false;
@@ -105,7 +103,7 @@ export function createOrderSummary({ catalogue, cart, announce, checkout }) {
     return visible >= threshold;
   }
   function smoothScrollToTarget(target) {
-    scrollToElement(target, { onDone: refreshNextActionVisibility });
+    scrollToElement(target, { onDone: refreshNextActionVisibility, focus: true });
   }
   function refreshNextActionVisibility() {
     if (visibilityFrame) cancelAnimationFrame(visibilityFrame);
@@ -132,7 +130,7 @@ export function createOrderSummary({ catalogue, cart, announce, checkout }) {
     // Order Summary is created before the workflow is mounted, so resolving
     // the target lazily ensures the CTA also appears for carts restored on load.
     actionTargetSelector = state.paymentUnlocked ? '#order-payment' : '#contact-shipping';
-    nextAction.textContent = t(state.paymentUnlocked ? 'PAY NOW' : 'ORDER');
+    nextAction.textContent = t(state.paymentUnlocked ? 'Pay now' : 'Order');
     nextAction.setAttribute('aria-label', t(state.paymentUnlocked ? 'Go to payment' : 'Go to Contact & Shipping'));
     refreshNextActionVisibility();
   }
@@ -170,10 +168,7 @@ export function createOrderSummary({ catalogue, cart, announce, checkout }) {
     list.hidden = !items.length;
     bar.hidden = !items.length;
     totals = orderTotals(items, language === 'vi' ? 'VND' : 'USD');
-    counts.replaceChildren(element('span', 'order-line-count', String(totals.lineCount)),
-      document.createTextNode(language === 'vi' ? ' mã sản phẩm · ' : ` ${totals.lineCount === 1 ? 'product' : 'products'} · `),
-      element('span', 'order-unit-count', String(totals.quantity)),
-      document.createTextNode(language === 'vi' ? ' đơn vị' : ` ${totals.quantity === 1 ? 'unit' : 'units'}`));
+    counts.textContent = countText(totals);
     counts.hidden = !items.length;
     total.textContent = formatPrice(totals.amount, totals.currency);
     feedback.textContent = `${t('Order updated')}. ${countText(totals)}. ${t('Estimated total')}: ${total.textContent}`;

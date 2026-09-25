@@ -1,5 +1,5 @@
 import { element, icon } from '../lib/dom.js';
-import { t } from '../lib/locale.js';
+import { language, t } from '../lib/locale.js';
 import { corporate } from '../data/corporate.js';
 
 export function createFooter() {
@@ -20,7 +20,7 @@ export function createFooter() {
     element('span', 'tax-value', corporate.tax_code),
   );
   identity.append(
-    element('h3', 'footer-heading', t('Company')),
+    element('h3', 'footer-heading', t('About us')),
     element('p', 'footer-legal', corporate.legal_vi),
     element('p', 'footer-legal', corporate.legal_en),
     tax,
@@ -36,7 +36,7 @@ export function createFooter() {
   const digits = corporate.phone_href.replace(/\D/g, '');
   const address = element('address', 'footer-contact-groups');
   for (const [name, label, value, href] of [
-    ['pin', t('Address'), corporate.address, `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(corporate.address)}`],
+    ['pin', t('Address'), language === 'vi' ? corporate.address_vi : corporate.address, `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(corporate.address)}`],
     ['phone', t('Phone / WhatsApp / Zalo'), corporate.phone, corporate.phone_href],
     ['mail', t('Email'), corporate.email, `mailto:${corporate.email}`],
   ]) {
@@ -46,6 +46,11 @@ export function createFooter() {
     const detail = element('a', 'contact-value', value);
     detail.href = href;
     if (href.startsWith('https:')) { detail.target = '_blank'; detail.rel = 'noopener'; }
+    if (name === 'pin') {
+      // Two deliberate lines, broken after the ward: "29 …, <ward>," / "<city>, <country>" — never an arbitrary wrap.
+      const parts = value.split(', ');
+      detail.replaceChildren(element('span', 'address-line', `${parts.slice(0, 2).join(', ')},`), element('span', 'address-line', parts.slice(2).join(', ')));
+    }
     body.append(detail);
     if (name === 'phone') {
       const chats = element('span', 'contact-chat-links');

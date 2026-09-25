@@ -12,7 +12,8 @@ export function createConfiguratorStep({ field, title, number, options, selected
   if (!selected) legend.setAttribute('aria-current', 'step');
   root.append(legend);
   const choices = element('div', 'step-choices');
-  const grid = element('div', visual ? `sign-option-grid${field === 'product_family_id' ? ' design-option-grid' : ''}` : 'attribute-options');
+  // Sign and design choices scroll inside a fixed-height box, so long categories never stretch the page.
+  const grid = element('div', visual ? `sign-option-grid${field === 'product_family_id' ? ' design-option-grid' : ' scroll-option-grid'}` : 'attribute-options');
   const nodes = [];
   // Keep the current option visible even when the inline filter excludes it.
   const sorted = options;
@@ -30,28 +31,22 @@ export function createConfiguratorStep({ field, title, number, options, selected
     nodes.push({ button, option });
     grid.append(button);
   }
-  const more = element('button', 'step-show-more', t('Show more'));
-  more.type = 'button';
   const status = element('p', 'filter-status');
   status.setAttribute('role', 'status');
-  const batchSize = 12;
-  const paginated = field === 'config_concept';
-  uiState.limit ??= batchSize;
   function renderOptions() {
     const query = textKey((uiState.query ?? '').trim());
     const matches = nodes.filter(({ option }) => textKey(option.searchText).includes(query));
-    const shown = new Set((paginated ? matches.slice(0, uiState.limit) : matches).map(({ option }) => option.value));
+    const shown = new Set(matches.map(({ option }) => option.value));
     if (selected) shown.add(selected);
     for (const { button, option } of nodes) button.hidden = !shown.has(option.value);
-    more.hidden = !paginated || matches.every(({ option }) => shown.has(option.value));
     status.textContent = matches.length || selected ? '' : t('No matching signs. Try another name or code.');
   }
-  more.addEventListener('click', () => {
-    const firstNew = nodes.find(({ button, option }) => button.hidden && textKey(option.searchText).includes(textKey((uiState.query ?? '').trim())));
-    uiState.limit += batchSize;
-    renderOptions();
-    firstNew?.button.focus({ preventScroll: true });
-  });
+  // Keep the chosen card in view inside the scroll box (the page itself does not move).
+  const revealSelected = () => {
+    const chosen = nodes.find(({ option }) => option.value === selected)?.button;
+    // The grid is position: relative, so offsetTop is already measured from the top of the scroll box.
+    if (chosen && grid.scrollHeight > grid.clientHeight) grid.scrollTop = Math.max(0, chosen.offsetTop - 8);
+  };
   if (options.length > 8) {
     const label = element('label', 'concept-filter-label', t('Filter these signs'));
     const input = element('input', 'concept-filter');
@@ -62,16 +57,16 @@ export function createConfiguratorStep({ field, title, number, options, selected
     input.value = uiState.query ?? '';
     const filter = () => {
       uiState.query = input.value;
-      uiState.limit = batchSize;
       renderOptions();
+      grid.scrollTop = 0;
     };
     input.addEventListener('input', filter);
     choices.append(label, input, status);
   }
   renderOptions();
   choices.append(grid);
-  if (paginated && options.length > batchSize) choices.append(more);
   root.append(choices);
+  requestAnimationFrame(revealSelected);
   root.updateSelection = value => {
     selected = value;
     if (selected) legend.removeAttribute('aria-current');

@@ -1,6 +1,6 @@
 import { element, icon, productImage } from '../lib/dom.js';
 import { createSearchResult } from './search-result.js';
-import { language, t } from '../lib/locale.js';
+import { language, t, tn } from '../lib/locale.js';
 import { getProductName } from '../lib/storefront.js';
 import { groupSearchResults } from '../lib/search-presentation.js';
 import { scrollToElement } from '../lib/scroll.js';
@@ -28,7 +28,7 @@ export function createProductSearch(catalogue, cart, announce) {
   input.autocomplete = 'off';
   input.spellcheck = false;
   const guidance = t('Search by IMPA, ISSA, barcode or product name');
-  const narrow = matchMedia('(max-width: 520px)');
+  const narrow = matchMedia('(max-width: 767px)');
   const setPlaceholder = () => { input.placeholder = narrow.matches ? t('IMPA, ISSA, barcode or name') : guidance; };
   setPlaceholder();
   narrow.addEventListener('change', setPlaceholder);
@@ -93,8 +93,7 @@ export function createProductSearch(catalogue, cart, announce) {
     grid.scrollTop = scrollTop;
     grid.hidden = !matches.length;
     more.hidden = shown >= matches.length;
-    status.textContent = matches.length ? `${matches.length} matching ${matches.length === 1 ? 'SKU' : 'SKUs'}${shown < matches.length ? ` · showing ${shown}` : ''}` : '';
-    if (language === 'vi' && matches.length) status.textContent = `${matches.length} mã sản phẩm phù hợp${shown < matches.length ? ` · đang hiển thị ${shown}` : ''}`;
+    status.textContent = matches.length ? `${tn(matches.length, '{n} matching SKU', '{n} matching SKUs')}${shown < matches.length ? ` · ${tn(shown, 'showing {n}', 'showing {n}')}` : ''}` : '';
   }
   function runSearch(updateURL = true) {
     clearTimeout(timer);
@@ -114,7 +113,7 @@ export function createProductSearch(catalogue, cart, announce) {
     showNext();
     emptyTitle.textContent = t(query ? 'No matching Hyperion product found' : 'Your next sign starts with a search.');
     emptyCopy.textContent = t(query ? 'Check the code or try another English or Vietnamese product name.' : 'Enter a product code or name to see the listed sizes, editions and prices.');
-    if (!matches.length) status.textContent = query ? (language === 'vi' ? '0 mã sản phẩm phù hợp' : '0 matching SKUs') : '';
+    if (!matches.length) status.textContent = query ? tn(0, '{n} matching SKU', '{n} matching SKUs') : '';
   }
   input.addEventListener('input', () => { clear.hidden = !input.value; clearTimeout(timer); timer = setTimeout(runSearch, 180); });
   form.addEventListener('submit', event => { event.preventDefault(); runSearch(); });

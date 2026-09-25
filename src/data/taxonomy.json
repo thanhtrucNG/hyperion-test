@@ -6,45 +6,126 @@
       "label_en": "Lifesaving Signs (LSS/LSA)",
       "label_vi": "Biển báo cứu sinh",
       "order": 1,
-      "family_count": 70,
-      "sku_count": 140,
-      "impa_count": 70
+      "family_count": 77,
+      "sku_count": 154,
+      "impa_count": 76
     },
     {
       "id": "means-of-escape-signs-mes",
       "label_en": "Means of Escape Signs (MES)",
       "label_vi": "Biển báo thoát hiểm",
       "order": 2,
-      "family_count": 57,
-      "sku_count": 114,
-      "impa_count": 53
+      "family_count": 90,
+      "sku_count": 180,
+      "impa_count": 62
     },
     {
       "id": "emergency-equipment-signs-ees",
       "label_en": "Emergency Equipment Signs (EES)",
       "label_vi": "Biển báo thiết bị khẩn cấp",
       "order": 3,
-      "family_count": 16,
-      "sku_count": 32,
-      "impa_count": 16
+      "family_count": 43,
+      "sku_count": 86,
+      "impa_count": 39
+    },
+    {
+      "id": "fire-fighting-equipment-signs-fes-ffe",
+      "label_en": "Fire-Fighting Equipment Signs (FES / FFE)",
+      "label_vi": "Biển báo thiết bị chữa cháy",
+      "order": 4,
+      "family_count": 106,
+      "sku_count": 212,
+      "impa_count": 56
+    },
+    {
+      "id": "fire-fighting-control-symbols-fcs",
+      "label_en": "Fire-Fighting Control Symbols (FCS)",
+      "label_vi": "Ký hiệu kiểm soát chữa cháy",
+      "order": 5,
+      "family_count": 202,
+      "sku_count": 404,
+      "impa_count": 197
     },
     {
       "id": "mandatory-signs-mss",
       "label_en": "Mandatory Signs (MSS)",
       "label_vi": "Biển báo bắt buộc",
-      "order": 4,
-      "family_count": 10,
-      "sku_count": 20,
-      "impa_count": 10
+      "order": 6,
+      "family_count": 104,
+      "sku_count": 208,
+      "impa_count": 94
     },
     {
       "id": "general-shipboard-port-leisure-signs",
       "label_en": "General Shipboard / Port & Leisure Signs",
       "label_vi": "Biển báo chung trên tàu / cảng & khu vực dịch vụ",
-      "order": 5,
-      "family_count": 1,
-      "sku_count": 2,
-      "impa_count": 1
+      "order": 7,
+      "family_count": 30,
+      "sku_count": 60,
+      "impa_count": 27
+    },
+    {
+      "id": "temporary-tie-tags",
+      "label_en": "Temporary Tie Tags",
+      "label_vi": "Thẻ treo cảnh báo tạm thời",
+      "order": 8,
+      "family_count": 26,
+      "sku_count": 52,
+      "impa_count": 26
+    },
+    {
+      "id": "marine-terminal-airport-signs-icao-9363",
+      "label_en": "Marine Terminal & Airport Signs (ICAO 9363)",
+      "label_vi": "Biển báo cảng biển & sân bay (ICAO 9363)",
+      "order": 9,
+      "family_count": 42,
+      "sku_count": 84,
+      "impa_count": 42
+    },
+    {
+      "id": "combination-signs",
+      "label_en": "Combination Signs",
+      "label_vi": "Biển báo kết hợp",
+      "order": 10,
+      "family_count": 37,
+      "sku_count": 74,
+      "impa_count": 31
+    },
+    {
+      "id": "prohibition-signs-pss",
+      "label_en": "Prohibition Signs (PSS)",
+      "label_vi": "Biển báo cấm",
+      "order": 11,
+      "family_count": 146,
+      "sku_count": 292,
+      "impa_count": 64
+    },
+    {
+      "id": "warning-signs-wss",
+      "label_en": "Warning Signs (WSS)",
+      "label_vi": "Biển báo cảnh báo",
+      "order": 12,
+      "family_count": 208,
+      "sku_count": 416,
+      "impa_count": 92
+    },
+    {
+      "id": "hazard-signs",
+      "label_en": "Hazard Signs",
+      "label_vi": "Biển báo hàng nguy hiểm",
+      "order": 13,
+      "family_count": 73,
+      "sku_count": 146,
+      "impa_count": 73
+    },
+    {
+      "id": "safety-posters",
+      "label_en": "Safety Posters",
+      "label_vi": "Áp phích an toàn",
+      "order": 14,
+      "family_count": 78,
+      "sku_count": 156,
+      "impa_count": 78
     }
   ]
 }

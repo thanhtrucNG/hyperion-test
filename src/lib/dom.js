@@ -31,7 +31,8 @@ export function productImage(product, { eager = false } = {}) {
   const frame = element('div', 'product-image');
   const fallback = element('span', 'image-fallback', t('Image unavailable'));
   frame.append(fallback);
-  if (product.image_url && /^https?:\/\//i.test(product.image_url)) {
+  // Web images (e.g. Shopify CDN) or images hosted with the site (./src/assets/products/…).
+  if (product.image_url && /^(https?:\/\/|\.\/)/i.test(product.image_url)) {
     fallback.textContent = t('Loading image…');
     const img = element('img');
     img.alt = getProductName(product, language);

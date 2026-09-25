@@ -70,7 +70,7 @@ async function start() {
   let storage;
   try { storage = window.localStorage; } catch { /* Session-only cart remains usable. */ }
   const cart = createCartStore(catalogue, storage, language);
-  const checkout = createCheckoutStore({ cart, storage, currency: language === 'vi' ? 'VND' : 'USD', config: checkoutConfig,
+  const checkout = createCheckoutStore({ cart, storage, currency: language === 'vi' ? 'VND' : 'USD', language, config: checkoutConfig,
     service: createPaymentService(checkoutConfig),
     onEvent: (type, order) => window.dispatchEvent(new CustomEvent(`hyperion:${type}`, { detail: order })),
   });

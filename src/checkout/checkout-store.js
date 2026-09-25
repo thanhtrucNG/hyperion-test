@@ -1,10 +1,14 @@
 import { AMOUNT_OPTIONS, PAYMENT_METHODS, CUSTOMER_FIELDS, SHIPPING_FIELDS, DRAFT_KEY, restoreDraft, validateContact, buildOrderDraft } from './order-draft.js';
 import { PaymentServiceError, validatePaymentResponse } from './payment-service.js';
 import { countryByCode } from './countries.js';
+import { regionByCode, regionName } from './regions.js';
 
 const ATTEMPT_KEY = 'hyperion.payment-attempt.v1';
-export function createCheckoutStore({ cart, storage, currency = 'USD', config = {}, service, onEvent = () => {} }) {
+export function createCheckoutStore({ cart, storage, currency = 'USD', language = 'en', config = {}, service, onEvent = () => {} }) {
   const fields = restoreDraft(storage);
+  // A picked region is shown in the current language.
+  const restoredRegion = regionByCode(fields.shipping.countryCode, fields.shipping.cityProvinceCode);
+  if (restoredRegion) fields.shipping.cityProvince = regionName(restoredRegion, language);
   const paymentMode = config.paymentMode === 'simulation' ? 'simulation' : 'live';
   let simulationStatus = 'idle';
   const depositUSD = config.depositUSD ?? 5;
@@ -87,12 +91,31 @@ export function createCheckoutStore({ cart, storage, currency = 'USD', config = 
     subscribe(listener) { listeners.add(listener); listener(snapshot()); return () => listeners.delete(listener); },
     selectCountry(code) {
       const country = countryByCode(code);
-      fields.shipping.countryCode = country?.code ?? ''; fields.shipping.country = country?.name ?? ''; invalidate();
+      const shipping = fields.shipping;
+      shipping.countryCode = country?.code ?? ''; shipping.country = country?.name ?? '';
+      // City / Province belongs to the country it was entered for: a different country clears it, the same country keeps it.
+      if (shipping.cityProvinceCountry && shipping.cityProvinceCountry !== shipping.countryCode) {
+        Object.assign(shipping, { cityProvince: '', cityProvinceCode: '', cityProvinceCountry: '' });
+      }
+      invalidate();
+    },
+    selectRegion(code) {
+      const shipping = fields.shipping;
+      const region = regionByCode(shipping.countryCode, code);
+      if (!region) return;
+      Object.assign(shipping, { cityProvince: regionName(region, language), cityProvinceCode: region.code, cityProvinceCountry: shipping.countryCode });
+      invalidate();
     },
     setField(group, key, value) {
       if (!(group === 'customer' ? CUSTOMER_FIELDS : group === 'shipping' ? SHIPPING_FIELDS : []).includes(key)) return;
+      if (group === 'shipping' && ['countryCode', 'cityProvinceCode', 'cityProvinceCountry'].includes(key)) return;
       fields[group][key] = String(value).slice(0, 500);
       if (group === 'shipping' && key === 'country') fields.shipping.countryCode = '';
+      // Typed text is not a picked region; it belongs to the current country.
+      if (group === 'shipping' && key === 'cityProvince') {
+        fields.shipping.cityProvinceCode = '';
+        fields.shipping.cityProvinceCountry = fields.shipping.cityProvince ? fields.shipping.countryCode : '';
+      }
       invalidate();
     },
     selectAmount(value) { if (AMOUNT_OPTIONS.includes(value) && amountAvailability[value] && fields.amountOption !== value) { fields.amountOption = value; invalidate(); } },

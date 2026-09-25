@@ -1,7 +1,10 @@
 import { countryByCode, countryByName } from './countries.js';
+import { hasRegionList, regionByCode } from './regions.js';
 export const DRAFT_KEY = 'hyperion.order-draft.v1';
 export const CUSTOMER_FIELDS = ['fullName', 'company', 'email', 'phone'];
-export const SHIPPING_FIELDS = ['address', 'cityProvince', 'country', 'countryCode'];
+// cityProvinceCode: picked region (listed countries only); cityProvinceCountry: country the City / Province was entered for.
+export const SHIPPING_FIELDS = ['country', 'countryCode', 'cityProvince', 'cityProvinceCode', 'cityProvinceCountry', 'address'];
+const INTERNAL_SHIPPING_FIELDS = ['countryCode', 'cityProvinceCode', 'cityProvinceCountry'];
 export const AMOUNT_OPTIONS = ['deposit', 'full'];
 export const PAYMENT_METHODS = ['card', 'zalopay', 'bank_transfer'];
 const cleanFields = (value, fields) => Object.fromEntries(fields.map(key => [key, typeof value?.[key] === 'string' ? value[key].slice(0, 500) : '']));
@@ -12,6 +15,9 @@ export function restoreDraft(storage) {
   const shipping = cleanFields(saved?.shipping, SHIPPING_FIELDS);
   const country = countryByCode(shipping.countryCode) || (!shipping.countryCode && countryByName(shipping.country));
   if (country) { shipping.countryCode = country.code; shipping.country = country.name; }
+  // A City / Province saved for a different country (or an unknown region) is not restored.
+  if (shipping.cityProvinceCountry && shipping.cityProvinceCountry !== shipping.countryCode) Object.assign(shipping, { cityProvince: '', cityProvinceCode: '', cityProvinceCountry: '' });
+  if (shipping.cityProvinceCode && !regionByCode(shipping.countryCode, shipping.cityProvinceCode)) shipping.cityProvinceCode = '';
   return {
     customer: cleanFields(saved?.customer, CUSTOMER_FIELDS),
     shipping,
@@ -22,7 +28,7 @@ export function restoreDraft(storage) {
 
 export function validateContact(customer, shipping) {
   const errors = {};
-  for (const key of [...CUSTOMER_FIELDS.filter(key => key !== 'company'), ...SHIPPING_FIELDS.filter(key => key !== 'countryCode')]) {
+  for (const key of [...CUSTOMER_FIELDS.filter(key => key !== 'company'), ...SHIPPING_FIELDS.filter(key => !INTERNAL_SHIPPING_FIELDS.includes(key))]) {
     if (!(customer[key] ?? shipping[key] ?? '').trim()) errors[key] = 'Required field';
   }
   if (customer.email?.trim() && !/^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(customer.email.trim())) errors.email = 'Enter a valid email address';
@@ -33,6 +39,8 @@ export function validateContact(customer, shipping) {
     if (value?.trim() && !/[\p{L}\p{N}]/u.test(value)) errors[key] = 'Enter a valid value';
   }
   if (!countryByCode(shipping.countryCode) || countryByCode(shipping.countryCode)?.name !== shipping.country) errors.country = 'Select a country from the list';
+  // Listed countries: City / Province must be one of that country's regions, picked from the list.
+  if (shipping.cityProvince?.trim() && hasRegionList(shipping.countryCode) && !regionByCode(shipping.countryCode, shipping.cityProvinceCode)) errors.cityProvince = 'Select a province from the list';
   return errors;
 }
 

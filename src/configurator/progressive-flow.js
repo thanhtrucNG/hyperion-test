@@ -68,7 +68,7 @@ export function createProgressiveFlow(families, catalogue, mapping) {
     reset() { steps = ['customer_category_id']; engine = createSelectionEngine(families, derivedCatalogue, steps); advance(); notify(); },
     addResolvedToCart(cart, quantity) {
       const sku = getState().resolvedSku;
-      if (!sku) throw new Error('Choose an exact SKU before adding to cart.');
+      if (!sku) throw new Error('Choose an exact product before adding it to your order.');
       return cart.add(sku.id, quantity);
     },
     subscribe(listener) { listeners.add(listener); listener(getState()); return () => listeners.delete(listener); },

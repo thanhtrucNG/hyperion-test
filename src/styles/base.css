@@ -10,6 +10,9 @@ img { display: block; max-width: 100%; }
 a { color: inherit; }
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { color: var(--navy-dark); line-height: 1.2; }
+/* No orphan words: headings balance their lines, paragraphs avoid a lone last word (template §5.4). */
+h1, h2, h3, legend, .hero-title-second { text-wrap: balance; }
+p { text-wrap: pretty; }
 h1, h2 { font-family: var(--font-display); }
 [hidden] { display: none !important; }
 :focus-visible { outline: 3px solid #2871b7; outline-offset: 4px; }

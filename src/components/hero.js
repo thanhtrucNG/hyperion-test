@@ -18,7 +18,7 @@ export function createHero() {
     const target = document.querySelector('#find-your-sign');
     if (!target) return;
     event.preventDefault();
-    scrollToElement(target);
+    scrollToElement(target, { focus: true });
     history.replaceState(null, '', '#find-your-sign');
   });
   const catalogue = element('a', 'button hero-action hero-action-secondary', t('Download catalogue'));

@@ -35,7 +35,7 @@ Every product site has exactly these sections, in this order. Do not add, remove
 
 **Header**
 - Left: Handyman logo (`assets/handyman-logo.png`, links to `./`).
-- Right, in order: nav links `PRODUCT LOOKUP` (→ `#product-query`), `ORDER` (→ `#find-your-sign`) — both glide per §11.1, `CATALOGUE` (downloads the product PDF) · language switch `EN | VI` · `CONTACT SALES` button (opens contact modal).
+- Right, in order: nav links `PRODUCT LOOKUP` (→ `#product-query`), `ORDER` (→ `#find-your-sign`) — both glide per §11.1, `CATALOGUE` (downloads the product PDF) · language switch `EN | VI` · `CONTACT SALES` button — opens a small panel with three direct contact options, each with its app icon: **Call us** (tel:), **WhatsApp** (wa.me), **Zalo** (zalo.me). No contact form. Desktop: dropdown under the button (300px wide). Below 1024px: the options open inline under the menu's `CONTACT SALES` button. Closes on outside click, Escape (focus returns to the button) and after an option is picked. Component: `src/components/contact-options.js`; icons: `assets/icons/{phone,whatsapp,zalo}.png` (shared, 96×96 transparent PNG, shown at 40px).
 - Below 1024px: nav links + Contact Sales collapse into a `Menu` button dropdown; language switch stays visible.
 
 **Hero**
@@ -56,6 +56,7 @@ Every product site has exactly these sections, in this order. Do not add, remove
 **Shop section**
 - Left column: Product search card, then configurator heading `FIND YOUR <PRODUCT> <NOUN>` + `Reset selection`, then numbered steps.
 - Steps: `1 Choose a product category` → product-specific steps from `configurator.json` → `Contact & Shipping` → `Payment`. The last two are always the final two steps.
+- Step 1 categories: 2 per row (1 on phones); only a lone last category spans the full row. Sign and design choices (steps 2–3) sit in a fixed-height scroll box — 420px (400px on phones) for signs, about 2½ rows so the cut-off row shows it scrolls — never "Show more" buttons that lengthen the page. A filter box appears above when there are more than 8 choices; the chosen card stays scrolled into view.
 - Right column (desktop/tablet): sticky Order Summary card. Mobile: bottom bar (hidden until the order has ≥1 item) that opens the summary as a sheet.
 
 **Footer** — fixed copy, see §10.
@@ -87,18 +88,19 @@ An agent MUST refuse to start until items marked **Required** exist in the proje
 
 ### 3.1 Shared theme assets (reuse unchanged for every marine product)
 
-These live in `src/assets/theme/` and `src/assets/sign-construction/`. They are **brand backgrounds**, not content. They MUST NOT be replaced per product, cropped into content images, or used anywhere other than the slot below.
+These live in `src/assets/theme/` (plus the three contact icons in `assets/icons/`). They are **brand backgrounds**, not content. They MUST NOT be replaced per product, cropped into content images, or used anywhere other than the slot below.
 
 | File | Size | Slot | CSS (fixed) |
 |---|---|---|---|
-| `hyperion-header-sky.png` | 2048×682 | Header background | `background: #eef8ff url(sky) center / cover;` + overlay `linear-gradient(rgba(255,255,255,.12), rgba(255,255,255,.12))`; bottom border `2px solid #e63720` |
-| `hyperion-hero-ship.png` | 2017×780 | Hero background (Hyperion only — other products supply their own hero photo, §4) | see §3.3 |
-| `sign-construction-bg.png` | 1672×941 | Light feature-section background | `background: #f8fbfe url(bg) center bottom / cover no-repeat;` |
-| `hyperion-order-summary.png` | 1448×1086 | Order Summary card (desktop) | `center / cover`, overlay per §3.3 |
-| `hyperion-order-summary-tall.png` | 1122×1402 | Order Summary sheet (mobile) | `center / cover` + `linear-gradient(rgba(4,37,60,.34), rgba(4,37,60,.25))` |
-| `hyperion-footer-ocean.png` | 2048×682 | Footer background | see §3.3 |
+| `theme-header-sky.png` | 2048×682 | Header background | `background: #eef8ff url(sky) center / cover;` + overlay `linear-gradient(rgba(255,255,255,.12), rgba(255,255,255,.12))`; bottom border `2px solid #e63720` |
+| `products/hyperion/hero.png` | 2017×780 | Hero background (Hyperion's own photo — each product supplies its own, §4) | see §3.3 |
+| `theme-feature-sea.png` | 1672×941 | Light feature-section background | `background: #f8fbfe url(bg) center bottom / cover no-repeat;` |
+| `theme-summary-ocean.png` | 1448×1086 | Order Summary card (desktop) | `center / cover`, overlay per §3.3 |
+| `theme-summary-ocean-tall.png` | 1122×1402 | Order Summary sheet (mobile) | `center / cover` + `linear-gradient(rgba(4,37,60,.34), rgba(4,37,60,.25))` |
+| `theme-footer-ocean.png` | 2048×682 | Footer background | see §3.3 |
+| `assets/icons/phone.png`, `whatsapp.png`, `zalo.png` | 96×96 | CONTACT SALES options (§1.1) | `40 × 40px`, radius 10px; transparent background — never re-export with a checkerboard or solid backdrop |
 
-> **Rename note:** when the template is extracted, rename these to `theme-header-sky`, `theme-feature-sea`, `theme-summary-ocean(-tall)`, `theme-footer-ocean`. Filenames must not carry a product name.
+> Shared theme files live in `src/assets/theme/` and are named `theme-*` — filenames must not carry a product name. Product-specific images live in `src/assets/products/<slug>/`.
 
 **Asset delivery rules**
 - Export every theme background as **WebP, quality 80, ≤ 350 KB** (current PNGs are 1.7–3.5 MB — must be converted). Keep the PNG only as source.
@@ -211,7 +213,7 @@ Rules:
 
 Every call-to-action button shows its text **in capitals**, in both languages.
 
-- **Counts as a CTA:** every element styled as a button that performs an action — primary (red) and secondary (outline/navy) buttons, header `CONTACT SALES`, hero buttons, `FIND PRODUCTS`, `ADD` / `ADD TO ORDER`, `SHOW MORE RESULTS`, Order Summary `ORDER` / `PAY NOW` / `VIEW ORDER`, payment buttons (`PAY BY CARD`, `OPEN SECURE CHECKOUT`, `CHECK PAYMENT STATUS`, `SUBMIT TRANSFER REFERENCE`), contact-sales `SEND REQUEST`, modal `CLOSE`, footer `WHATSAPP` / `ZALO` chips, `RESET SELECTION`.
+- **Counts as a CTA:** every element styled as a button that performs an action — primary (red) and secondary (outline/navy) buttons, header `CONTACT SALES`, hero buttons, `FIND PRODUCTS`, `ADD` / `ADD TO ORDER`, `SHOW MORE RESULTS`, Order Summary `ORDER` / `PAY NOW` / `VIEW ORDER`, payment buttons (`PAY BY CARD`, `OPEN SECURE CHECKOUT`, `CHECK PAYMENT STATUS`, `SUBMIT TRANSFER REFERENCE`), modal and sheet `CLOSE`, the mobile-menu `MENU` button, footer `WHATSAPP` / `ZALO` chips, `RESET SELECTION`.
 - **Not a CTA** (keep normal case): selectable option cards (category, sign, size, edition, payment option/method), form labels, text links such as `View Catalogue →`, the `EN | VI` switch, step titles.
 - **How:** store the label in normal sentence case in `locale.js` (e.g. `'Find your sign': 'Tìm biển báo'`) and render capitals with CSS `text-transform: uppercase` on the button class. Never type capitals into the translation file for a CTA — this keeps screen-reader output natural and lets one string serve other contexts.
 - Style: `--fs-5` 14px, weight 700, letter-spacing `0.04em`, `white-space: nowrap`. Max 3 words (Vietnamese max 4 words). Vietnamese capitals keep all diacritics (`THANH TOÁN NGAY`, `TẢI CATALOGUE`) — check that the font draws stacked marks (Ể, Ặ) without clipping at the 48px button height.
@@ -248,7 +250,7 @@ Every call-to-action button shows its text **in capitals**, in both languages.
 | Laptop | 1024 – 1279px | 1024, 1180 |
 | Desktop | ≥ 1280px | 1280, 1440, 1920 |
 
-Media queries use only `min-width: 768px`, `min-width: 1024px`, `min-width: 1280px` (mobile-first), plus the one footer rule at `min-width: 1296px` (§10). **Hyperion deviation:** ~25 different breakpoints today — normalise.
+Media queries use only these three boundaries, written either mobile-first (`min-width: 768px / 1024px / 1280px`) or desktop-first with the matching maximums (`max-width: 767px / 1023px / 1279px`), plus the one footer rule at `min-width: 1296px` (§10). The same values apply to `matchMedia()` in JavaScript. `@container` queries (a component reacting to its own width) are allowed and do not count as breakpoints.
 
 ### 6.3 Page grid
 
@@ -343,7 +345,7 @@ Rules:
 Translate the **meaning in context**, not the words. Before writing a Vietnamese string, ask: *where does it appear, what does the customer do next?*
 
 1. **One concept = one Vietnamese term, everywhere.** Use the glossary below; never alternate synonyms (e.g. do not mix "giỏ hàng" and "đơn hàng" for the same thing).
-2. **No half-English phrases.** Wrong: `LIÊN HỆ SALES`. Right: `LIÊN HỆ KINH DOANH` (or `LIÊN HỆ BÁN HÀNG`). Allowed English: brand names, product codes, and loanwords in the glossary (`catalogue`).
+2. **No half-English phrases.** Wrong: `THÊM VÀO CART`. Right: `THÊM VÀO ĐƠN HÀNG`. Allowed English: brand names, product codes, approved glossary terms (e.g. `sales` in `LIÊN HỆ SALES`), and loanwords in the glossary (`catalogue`).
 3. **Check that the word means the same thing here.** Wrong: `Menu` → `Danh mục` ("danh mục" = category, and it clashes with "Chọn danh mục sản phẩm"). Right: `Menu`.
 4. **Address the customer as "bạn"**, friendly-professional. Requests start with `Vui lòng…`; never use imperative-only commands in error messages.
 5. **Sentence case in Vietnamese** (only the first word and proper nouns capitalised). CTAs get capitals from CSS (§5.3), not from the string.
@@ -362,7 +364,8 @@ Translate the **meaning in context**, not the words. Before writing a Vietnamese
 | Product lookup | Tra cứu sản phẩm | |
 | Product range | Dòng sản phẩm | |
 | Catalogue | catalogue | loanword, lowercase in sentences |
-| Contact sales | Liên hệ kinh doanh | |
+| Contact sales | Liên hệ sales | approved by the business; "sales" stays in English |
+| About us (footer column heading) | Về chúng tôi | not "Công ty" — "Company / Công ty" is only the checkout form field |
 | Contact & Shipping | Thông tin liên hệ & giao hàng | |
 | City / Province | Tỉnh / Thành phố | |
 | Country | Quốc gia | |
@@ -422,7 +425,7 @@ Layout: 3 columns separated by 1px dividers (`rgba(255,255,255,.12)`), columns s
 <PRODUCT> by DLV Corporation              ← brand title (fs-3, "by DLV Corporation" on its own line in --red)
 <product tagline EN/VI>                   ← fs-5, the only per-product footer text
 
-COMPANY                                   ← column heading, fs-5, uppercase, --coral
+ABOUT US                                  ← column heading, fs-5, uppercase, --coral (VI: VỀ CHÚNG TÔI)
 CÔNG TY CP ĐẦU TƯ THƯƠNG MẠI DỊCH VỤ VÀ TƯ VẤN ĐỖ LÊ VŨ
 DLV CORPORATION
 Tax code: 0307940363                      ← VI: "Mã số thuế: 0307940363"
@@ -436,7 +439,8 @@ CONTACT
 ```
 
 - Source of truth: `src/data/corporate.js`. Agents MUST NOT retype these strings elsewhere.
-- Company legal names and address: single line at ≥ 1296px (`white-space: nowrap`), wrap below.
+- Company legal names: single line at ≥ 1296px (`white-space: nowrap`), wrap below. Address: always two fixed lines, broken after the ward ("29 …, Tan Thuan Ward," / "Ho Chi Minh City, Vietnam"), each line unbroken at ≥ 1296px. Brand column max 200px on desktop (tagline may break after its first sentence).
+- VI page shows the Vietnamese address (`corporate.address_vi`); the map link always searches the English address.
 - The year is computed at build/runtime, never hard-coded (**Hyperion deviation:** currently hard-coded `2026`).
 
 ---
@@ -545,6 +549,17 @@ The shopping flow is data-driven. A new product changes data, not code.
 
 Rules: IDs are stable strings; every `_en` field has a `_vi` twin; images follow §4; a step whose field has only one possible value for the current selection is auto-selected and shown as complete.
 
+**Loading product data (standard process).** Product data is generated, never hand-edited:
+
+1. `node scripts/make-price-template.mjs <catalogue build folder>` → `docs/price-template-new-skus.csv` (one row per size × edition; sizes already sold are pre-filled from current site prices).
+2. The business fills in `price_vnd` / `price_usd` for every row. If official prices are not ready, `node scripts/estimate-prices.mjs` fills the gaps from current site prices (Standard: never-decreasing curve by sign area; Outdoor: Standard × the 150×150 mm Outdoor/Standard ratio) into `docs/price-list-new-skus.csv`, every estimate marked `ESTIMATE` — replace them before relying on them.
+3. `node scripts/build-catalogue-data.mjs --catalogue <folder> --prices <filled CSV> [--images <base URL or ./path>] [--odoo <Odoo import folder>]` regenerates `products.json`, `families.json`, `taxonomy.json`, `configurator.json`. It keeps existing SKUs unchanged, adds new ones, and **stops without writing** if any SKU lacks a price or Vietnamese name, or a new barcode/reference is duplicated. Use `--dry-run --out <temp folder>` to preview. With `--odoo`, sizes follow Odoo's orientation (as on existing products — never show one size in both orientations), "(Type B)" design names follow Odoo, and the report lists SKUs on only one side. Re-running is safe: previously generated SKUs are rebuilt, hand-maintained ones kept.
+4. Missing Vietnamese design names go in `scripts/catalogue-names-vi-extra.tsv` (reviewed by a Vietnamese speaker).
+5. Images: `<base URL>/<Standard internal reference>.jpg` for both editions — either a web address or a folder in the repo, e.g. `--images ./product-images` (Hyperion: 1,108 JPGs, 17 MB, lazy-loaded — the same folder the Odoo image URLs point to on GitHub, so each picture exists once). Without `--images`, new SKUs show "Image unavailable".
+6. Never publish `cost` or other internal fields — the build drops every field the site doesn't read.
+
+Page budget for product data is measured **compressed (gzip)**: ≤ 400 KB. (Hyperion with 2,524 SKUs: 3.4 MB raw, 240 KB gzip.)
+
 ### 12.1 Checkout — Contact & Shipping form
 
 **Field order (fixed):**
@@ -650,27 +665,35 @@ Country MUST sit directly before City / Province (same row on desktop/tablet: Co
 
 ## Appendix A — Hyperion vs. this standard (migration list)
 
-These are differences in the current Hyperion code that must be fixed when the template is extracted (or before cloning):
+Status after the alignment pass of 2026-09-24.
 
-| Area | Hyperion today | Standard |
+**Still different from the standard (open):**
+
+| Area | Hyperion today | Standard | Why still open |
+|---|---|---|---|
+| Font sizes | ~40 distinct values, several fluid `clamp()` headline sizes (e.g. hero H1 47px) | 5 tokens: 40 / 28 / 20 / 16 / 14px (§5.2) | Not selected for this pass |
+| Theme images | PNG, 1.7–3.5 MB each | WebP ≤ 350 KB (§3.1) | No WebP converter on the build machine; skipped |
+| Catalogue | EN PDF only (Hyperion-IMO-Signs-Catalogue-by-DLV-Corp, replaced 2026-09-25) | EN + VI when available | No VI catalogue supplied |
+| Catalogue size | 25.5 MB | ≤ 5 MB (§2) | Needs compressing (image downsampling) before launch — no PDF tool on the build machine |
+| Bank branch name | `VPBank - Chi nhanh Trung Son` (no accents) in bank-transfer settings | proper Vietnamese, unless it must match bank records | Needs a business decision (see `docs/translation-review-hyperion.md`) |
+| Product range strip / hero rotating image | not present | optional; if added, follow §11.2 | Not in the Hyperion brief |
+| New catalogue SKUs (2,216, 9 new categories) | LIVE in the site data (2026-09-25) with images; 774 SKUs (50 size × edition rows) use ESTIMATED prices from `scripts/estimate-prices.mjs` | official prices | Replace estimates in `docs/price-list-new-skus.csv` and re-run the build |
+
+**Brought in line (reference implementation):**
+
+| Area | Now | Where |
 |---|---|---|
-| Font | Segoe UI / Arial (system) | Be Vietnam Pro, self-hosted |
-| Font sizes | ~40 distinct values incl. `clamp()` | 5 tokens (§5.2) |
-| Breakpoints | ~25 distinct | 3 (§6.2) |
-| Fluid spacing | `clamp()` in gutters and section padding | fixed per breakpoint (§6.3) |
-| Theme images | PNG, 1.7–3.5 MB each | WebP ≤ 350 KB |
-| Footer year | hard-coded 2026 | dynamic |
-| Catalogue | EN PDF only | EN + VI when available |
-| Asset names | `hyperion-*` theme files | neutral `theme-*` names |
-| Hero H1 size | 47px (fluid) | 40px / 28px mobile |
-| Order step titles | 18px (16px locked/mobile) | 20px / 16px mobile (§6.6) |
-| Prices in steps | 22px (18px mobile) | 20px (§6.6) |
-| Focus after section glide | only "View order" moves focus to its heading | every §11.1 destination receives focus |
-| CTA text case | mixed: `Find your sign`, `Download catalogue`, `Find products`, `Add`, `Show more results` in normal case; `CONTACT SALES`, `ORDER`, `PAY NOW`, `SEND REQUEST` typed in capitals in `locale.js` | all CTAs uppercase via CSS, strings in sentence case (§5.3) |
-| VI wording | `Menu` → "Danh mục" (wrong meaning); `LIÊN HỆ SALES` (mixed language); "giỏ hàng" and "đơn hàng" both used for the order | glossary §8.1 |
-| Inline VI strings | 7 `language === 'vi' ? … : …` strings in components (counts, search status, summary) | all in `locale.js` (§8.2) |
-| Checkout field order | Address → City / Province → Country | Country → City / Province → Address (§12.1) |
-| City / Province | free text for every country | dropdown for VN (34), US, CA, AU, MY; free text otherwise (§12.1) |
-| Product range strip / hero rotating image | not present | optional; if added, follow §11.2 |
-
-**Already compliant in Hyperion (keep as reference):** smooth section scrolling via `src/lib/scroll.js` (§11.1) · Payment step uses the same step styles as the others (§6.6) · no "Continue to payment" button · mobile order bar hidden until the first item · compact locked steps · 3-column footer with fixed copy (§10).
+| Font | Be Vietnam Pro 400 / 600 / 700, self-hosted with Vietnamese + Latin subsets, 2 files preloaded | `assets/fonts/`, `src/styles/fonts.css`, `index.html` |
+| Breakpoints | only 767 / 1023 / 1279 (+ footer 1296); JS `matchMedia` uses the same | all stylesheets, `header.js`, `order-summary.js`, `product-search.js` |
+| Spacing | fixed per breakpoint — gutter 48 / 32 / 16, header 80 / 72 / 64, section padding 96 / 64 / 48, hero 64 / 48 / 40, shop summary column 360 / 320 / 280 | `tokens.css`, `hero.css`, `sign-construction.css`, `order-summary.css`, `footer.css` |
+| Asset names | `theme-*` shared backgrounds; product photos in `src/assets/products/hyperion/`; contact icons in `assets/icons/` | `src/assets/` |
+| Footer year | computed automatically | `footer.js` |
+| CTA text | every CTA uppercase via CSS, labels in sentence case | `marine-theme.css` (CTA block), `locale.js` |
+| VI wording | glossary applied; 7 inline strings moved to `locale.js` via `tn()`; full EN/VI review done | `locale.js`, `docs/translation-review-hyperion.md` |
+| Order steps | titles 20px (16px mobile / locked), in-step prices 20px | `configurator-steps.css`, `configurator.css`, `checkout.css`, `configurator-purchase.css` |
+| Focus after glide | header links, hero button and Order Summary button move focus to the destination | `src/lib/scroll.js` (`focus: true`) |
+| Checkout | Country → City / Province → Address; province dropdown for VN (34), US (51), CA (13), AU (8), MY (16); free text elsewhere; clear-on-change, keep-on-reselect; all 10 tests of §12.1 passed (scripted + real mouse/keyboard) | `src/checkout/regions.js`, `components/region-select.js`, `order-completion.js`, `checkout-store.js`, `order-draft.js` |
+| CONTACT SALES | three direct options (call, WhatsApp, Zalo) with icons; contact form removed; VI label "LIÊN HỆ SALES" (approved term) | `components/contact-options.js`, `header.css` |
+| Headings | balanced lines, no orphan words (`text-wrap: balance` / `pretty`) | `base.css` |
+| Footer headings | "ABOUT US / VỀ CHÚNG TÔI" and "CONTACT / LIÊN HỆ"; VI page shows the Vietnamese address | `footer.js`, `corporate.js`, `locale.js` |
+| Earlier fixes | smooth section scrolling (§11.1), Payment step uses the shared step styles (§6.6), no "Continue to payment" button, mobile order bar hidden until the first item, compact locked steps, 3-column footer with fixed copy (§10) | — |

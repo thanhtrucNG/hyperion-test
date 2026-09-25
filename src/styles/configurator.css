@@ -5,7 +5,7 @@
 .configurator-reset:disabled { color: var(--muted); opacity: .65; }
 .configurator-reset:hover:not(:disabled) { border-color: var(--navy); background: var(--surface); }
 .group-selector { min-width: 0; margin: 0; padding: var(--space-6); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-.group-selector legend { padding-inline: var(--space-2); color: var(--navy); font-size: var(--text-lg); font-weight: 700; }
+.group-selector legend { padding-inline: var(--space-2); color: var(--navy); font-size: var(--text-xl); font-weight: 700; }
 .step-number { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-right: var(--space-2); border-radius: var(--radius-sm); color: white; background: var(--navy); font-size: var(--text-sm); }
 .group-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
 .group-option { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; padding: var(--space-5); text-align: left; color: var(--navy); background: var(--surface); border: 1px solid #bdcad4; border-radius: var(--radius-sm); transition: background .15s ease, border-color .15s ease; }
@@ -20,12 +20,13 @@
 .group-option[aria-pressed='true'] .group-marker .icon { visibility: visible; }
 .group-description { color: var(--muted); font-size: var(--text-sm); line-height: 1.5; }
 .selection-status { min-height: 48px; padding-block: var(--space-4); color: var(--navy); font-size: var(--text-sm); }
-@media (max-width: 850px) { .group-option { padding: var(--space-4); } .group-selector { padding: var(--space-4); } }
-@media (max-width: 640px) {
+@media (max-width: 1023px) { .group-option { padding: var(--space-4); } .group-selector { padding: var(--space-4); } }
+@media (max-width: 767px) {
   .configurator-heading { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
   .group-options { grid-template-columns: 1fr; }
   .group-option { gap: var(--space-2); }
   .group-selector legend { font-size: var(--text-base); }
 }
 
-.group-option:last-child { grid-column: 1 / -1; }
+/* A lone last category spans the row; with an even number of categories every row holds two. */
+.group-option:last-child:nth-child(odd) { grid-column: 1 / -1; }

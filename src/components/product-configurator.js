@@ -164,6 +164,6 @@ export function createProductConfigurator(families, taxonomy, catalogue, mapping
     history.replaceState(null, '', url);
   });
   reset.addEventListener('click', () => { stepStates.clear(); try { session?.removeItem(CONFIG_STATE_KEY); } catch {} engine.reset(); buttons.values().next().value?.focus(); });
-  window.addEventListener('hyperion:configure', event => { if (buttons.has(event.detail)) { select('customer_category_id', event.detail); scrollToElement(section); } });
+  window.addEventListener('hyperion:configure', event => { if (buttons.has(event.detail)) { select('customer_category_id', event.detail); scrollToElement(section, { focus: true }); } });
   return section;
 }

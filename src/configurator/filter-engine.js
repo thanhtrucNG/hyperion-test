@@ -56,7 +56,7 @@ export function createSelectionEngine(families, catalogue, steps = DEFAULT_STEPS
     resolveSellableSku: () => resolveSellableSku(getCandidates()),
     addResolvedToCart(cart, quantity) {
       const sku = resolveSellableSku(getCandidates());
-      if (!sku) throw new Error('Choose an exact SKU before adding to cart.');
+      if (!sku) throw new Error('Choose an exact product before adding it to your order.');
       return cart.add(sku.id, quantity); // The same API as search; no second cart or inferred SKU.
     },
     subscribe(listener) { listeners.add(listener); listener(getState()); return () => listeners.delete(listener); },

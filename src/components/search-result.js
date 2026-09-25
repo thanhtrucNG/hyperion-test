@@ -18,7 +18,7 @@ export function createSearchResult(product, cart, announce, { showSubtotal = fal
   top.append(productImage(product), copy);
 
   const bottom = element('form', 'result-purchase');
-  bottom.setAttribute('aria-label', `${t('Add to cart')}: ${product.barcode}`);
+  bottom.setAttribute('aria-label', `${t('Add to order')}: ${product.barcode}`);
   const price = element('div', 'result-price');
   const sourcePrice = getProductPrice(product, language);
   price.append(element('span', 'price-label', t('Unit price')), element('strong', '', formatPrice(sourcePrice.amount, sourcePrice.currency)));
@@ -31,8 +31,8 @@ export function createSearchResult(product, cart, announce, { showSubtotal = fal
   } });
   const add = element('button', 'button button-primary add-to-cart');
   add.type = 'submit';
-  add.append(icon('cart'), element('span', '', t(compact ? 'Add' : 'Add to cart')));
-  add.setAttribute('aria-label', `${t('Add to cart')}: ${product.barcode}`);
+  add.append(icon('cart'), element('span', '', t(compact ? 'Add' : 'Add to order')));
+  add.setAttribute('aria-label', `${t('Add to order')}: ${product.barcode}`);
   bottom.append(price, quantity.element, add);
   if (showSubtotal) {
     const label = element('span', 'summary-quantity-label', t('Quantity'));

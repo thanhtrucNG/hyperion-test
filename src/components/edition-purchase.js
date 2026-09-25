@@ -22,7 +22,7 @@ export function createEditionPurchase({ number, catalogue, cart, announce, onSel
   const form = element('form', 'edition-controls');
   const price = element('div', 'result-price');
   const priceValue = element('strong'); price.append(element('span', 'price-label', t('Unit price')), priceValue);
-  const add = element('button', 'button button-primary add-to-cart', t('Add to cart')); add.type = 'submit';
+  const add = element('button', 'button button-primary add-to-cart', t('Add to order')); add.type = 'submit';
   let product = null, imageKey = null;
   const quantity = createQuantityStepper('', { onChange() { clearFeedback(); updateAmounts(); } });
   const quantityGroup = element('div', 'edition-quantity'); quantityGroup.append(element('span', 'price-label', t('Quantity')), quantity.element);
@@ -46,11 +46,11 @@ export function createEditionPurchase({ number, catalogue, cart, announce, onSel
     event.preventDefault();
     clearFeedback();
     try {
-      if (!product || getState().resolvedSku?.id !== product.id) throw Error(t('Choose an exact SKU before adding to cart.'));
+      if (!product || getState().resolvedSku?.id !== product.id) throw Error(t('Choose an exact product before adding it to your order.'));
       cart.add(product.id, quantity.getValue());
       quantity.setValue(1);
       updateAmounts();
-      feedback.append(icon('check'), element('span', '', t('Added to cart')));
+      feedback.append(icon('check'), element('span', '', t('Added to order')));
       feedbackTimer = setTimeout(clearFeedback, 1200);
     } catch (error) { announce(error.message); }
   });
@@ -88,7 +88,7 @@ export function createEditionPurchase({ number, catalogue, cart, announce, onSel
     controls[2].setAttribute('aria-label', `${t('Increase quantity for')} ${current.id}`);
     for (const control of controls) if (!product) control.disabled = true;
     if (product) { controls[1].disabled = false; quantity.setValue(quantity.getValue()); }
-    add.setAttribute('aria-label', `${t('Add to cart')}: ${product?.barcode ?? title.textContent}`);
+    add.setAttribute('aria-label', `${t('Add to order')}: ${product?.barcode ?? title.textContent}`);
     updateAmounts();
   }
   return { element: root, update };

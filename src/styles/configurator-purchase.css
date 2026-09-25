@@ -11,7 +11,7 @@
 /* Unit price and quantity share a row; the CTA spans the detail column. */
 .edition-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-4); align-items: end; border-top: 1px solid var(--line); padding-top: var(--space-4); }
 .edition-controls .price-label { display: block; margin-bottom: 6px; }
-.edition-controls .result-price strong { display: flex; align-items: center; min-height: 46px; font-size: 22px; color: var(--navy); line-height: 1.15; }
+.edition-controls .result-price strong { display: flex; align-items: center; min-height: 46px; font-size: var(--text-xl); color: var(--navy); line-height: 1.15; }
 .edition-controls .edition-quantity { min-width: 0; }
 .edition-controls .add-to-cart { grid-column: 1 / -1; min-height: 46px; white-space: nowrap; }
 .edition-controls .add-to-cart:disabled { opacity: .55; cursor: not-allowed; }
@@ -23,8 +23,7 @@
   .edition-purchase .edition-identity { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
   .edition-purchase .product-image { height: 240px; }
 }
-@media (max-width: 480px) {
+@media (max-width: 767px) {
   .edition-purchase .product-image { height: 220px; }
   .edition-controls { gap: var(--space-3); }
-  .edition-controls .result-price strong { font-size: var(--text-lg); }
 }

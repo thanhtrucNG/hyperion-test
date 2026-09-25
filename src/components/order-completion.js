@@ -1,8 +1,9 @@
 import { element, icon } from '../lib/dom.js';
-import { t } from '../lib/locale.js';
+import { language, t } from '../lib/locale.js';
 import { formatPrice } from '../lib/storefront.js';
 import { secureURL } from '../checkout/payment-service.js';
 import { createCountrySelect } from './country-select.js';
+import { createRegionSelect } from './region-select.js';
 import { createPaymentModal } from './payment-modal.js';
 import { paymentErrorMessage } from '../checkout/card-validation.js';
 
@@ -38,23 +39,33 @@ export function createOrderCompletion(checkout) {
   const modal = createPaymentModal(checkout); root.append(modal.element);
   const form = element('div', 'shipping-fields');
   const inputs = new Map(), touched = new Set();
+  const markTouched = key => { touched.add(key); render(checkout.getState()); };
+  let region = null;
+  // Fixed order: Country sits directly before City / Province (same row), street address last.
   for (const [group, key, label, autocomplete, type] of [
     ['customer', 'fullName', 'Full Name', 'name', 'text'], ['customer', 'company', 'Company', 'organization', 'text'],
     ['customer', 'email', 'Email', 'email', 'email'], ['customer', 'phone', 'Phone / WhatsApp', 'tel', 'tel'],
+    ['shipping', 'country', 'Country', 'country-name', 'text'], ['shipping', 'cityProvince', 'City / Province', null, 'text'],
     ['shipping', 'address', 'Shipping Address', 'street-address', 'text'],
-    ['shipping', 'cityProvince', 'City / Province', 'address-level2', 'text'], ['shipping', 'country', 'Country', 'country-name', 'text'],
   ]) {
     const field = element('div', `shipping-field${key === 'address' ? ' shipping-field-wide' : ''}`);
     const caption = element('label', '', t(label) + (key === 'company' ? '' : ' *'));
-    const country = key === 'country' ? createCountrySelect({ onInput: value => checkout.setField(group, key, value), onSelect: code => checkout.selectCountry(code), onBlur: () => { touched.add(key); render(checkout.getState()); } }) : null;
-    const input = country?.input ?? element('input'); input.id = `shipping-${key}`; input.name = key; input.type = type;
-    input.autocomplete = autocomplete; input.required = key !== 'company'; input.maxLength = 500;
+    const picker = key === 'country'
+      ? createCountrySelect({ onInput: value => checkout.setField(group, key, value), onSelect: code => checkout.selectCountry(code), onBlur: () => markTouched(key) })
+      : key === 'cityProvince'
+        ? (region = createRegionSelect({ language, onInput: value => checkout.setField(group, key, value), onSelect: code => checkout.selectRegion(code), onBlur: () => markTouched(key) }))
+        : null;
+    const input = picker?.input ?? element('input'); input.id = `shipping-${key}`; input.name = key; input.type = type;
+    if (autocomplete) input.autocomplete = autocomplete;
+    input.required = key !== 'company'; input.maxLength = 500;
     caption.htmlFor = input.id;
     const error = element('span', 'field-error'); error.id = `${input.id}-error`;
     input.setAttribute('aria-describedby', error.id);
-    if (!country) input.addEventListener('input', () => checkout.setField(group, key, input.value));
-    input.addEventListener('blur', () => { touched.add(key); render(checkout.getState()); });
-    field.append(caption, country?.root ?? input, error); form.append(field); inputs.set(key, { group, input, error });
+    if (!picker) {
+      input.addEventListener('input', () => checkout.setField(group, key, input.value));
+      input.addEventListener('blur', () => markTouched(key));
+    }
+    field.append(caption, picker?.root ?? input, error); form.append(field); inputs.set(key, { group, input, error });
   }
   shipping.content.append(form);
 
@@ -132,6 +143,8 @@ export function createOrderCompletion(checkout) {
     payment.placeholder.textContent = t(state.shippingUnlocked ? 'Complete Contact & Shipping first' : 'Add an item to your order first');
     setState(shipping, state.shippingUnlocked, state.paymentUnlocked);
     setState(payment, state.paymentUnlocked, p.status === 'confirmed');
+    // City / Province follows the selected country (list, free text, or disabled until a country is picked).
+    region.setCountry(order.shipping.countryCode && order.shipping.country ? order.shipping.countryCode : '');
     for (const [key, { group, input, error }] of inputs) {
       if (input.value !== order[group][key]) input.value = order[group][key];
       const invalid = touched.has(key) && Boolean(state.errors[key]);
@@ -153,7 +166,7 @@ export function createOrderCompletion(checkout) {
       availability.textContent = button.disabled ? t('Currently unavailable') : '';
       availability.hidden = !button.disabled;
     }
-    cta.textContent = t(busy ? 'Processing…' : p.method === 'card' ? 'Pay by card' : p.method === 'zalopay' ? 'Pay with ZaloPay' : p.method === 'bank_transfer' ? 'View bank transfer details' : 'Select a payment method');
+    cta.textContent = t(busy ? 'Processing…' : p.method === 'card' ? 'Pay by card' : p.method === 'zalopay' ? 'Pay with ZaloPay' : p.method === 'bank_transfer' ? 'View bank transfer details' : 'Select payment method');
     cta.disabled = !state.canPay || busy;
     // Backend integration enables the method action; the current storefront only captures the choice.
     cta.hidden = !state.methodAvailability[p.method];
