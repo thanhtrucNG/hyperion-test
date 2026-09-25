@@ -21,7 +21,6 @@ export function createFooter() {
   );
   identity.append(
     element('h3', 'footer-heading', t('About us')),
-    element('p', 'footer-legal', corporate.legal_vi),
     element('p', 'footer-legal', corporate.legal_en),
     tax,
   );
