@@ -195,10 +195,10 @@ Rules: red is for **one** primary action per view plus thin accent lines — nev
 | Token | Size | Line height | Weight | Used for |
 |---|---|---|---|---|
 | `--fs-1` | **40px** | 1.2 | 700 | Hero H1 (desktop/tablet) |
-| `--fs-2` | **28px** | 1.2 | 700 | Section H2, hero H1 on mobile, Order Summary total |
-| `--fs-3` | **20px** | 1.2 | 700 | Card/step titles, footer brand title, prices, section H2 on mobile |
-| `--fs-4` | **16px** | 1.5 | 400 / 600 | Body, intro, inputs, option titles, step titles on mobile |
-| `--fs-5` | **14px** | 1.5 | 400 / 600 / 700 | Labels, hints, meta (IMPA/size), eyebrows, footer text, captions, errors, **all CTA button and chip text (uppercase, 700)** |
+| `--fs-2` | **28px** | 1.2 | 700 | Section H2, hero H1 on mobile, Order Summary total, footer product name (desktop/tablet) |
+| `--fs-3` | **20px** | 1.2 | 700 | Card/step titles, footer "by DLV CORPORATION" and footer product name on mobile, prices, section H2 on mobile |
+| `--fs-4` | **16px** | 1.5 | 400 / 600 | Body, intro, inputs, option titles, step titles on mobile, footer tax code and contact lines |
+| `--fs-5` | **14px** | 1.5 | 400 / 600 / 700 | Labels, hints, meta (IMPA/size), eyebrows, footer column heading and copyright, captions, errors, **all CTA button and chip text (uppercase, 700)** |
 
 Rules:
 - No other size may appear anywhere (including modals, toasts, badges). **Minimum size is 14px** — no 10/11/12/13px text.
@@ -250,7 +250,7 @@ Every call-to-action button shows its text **in capitals**, in both languages.
 | Laptop | 1024 – 1279px | 1024, 1180 |
 | Desktop | ≥ 1280px | 1280, 1440, 1920 |
 
-Media queries use only these three boundaries, written either mobile-first (`min-width: 768px / 1024px / 1280px`) or desktop-first with the matching maximums (`max-width: 767px / 1023px / 1279px`), plus the one footer rule at `min-width: 1296px` (§10). The same values apply to `matchMedia()` in JavaScript. `@container` queries (a component reacting to its own width) are allowed and do not count as breakpoints. **Every `max-width` value ends in `.98`** (`767.98px`, `1023.98px`, `1279.98px`), in CSS and in `matchMedia()`: on screens with display scaling (e.g. 150 %) the viewport can be a fraction like 1279.3px, which falls in the gap between `max-width: 1279px` and `min-width: 1280px` so neither layout applies.
+Media queries use only these three boundaries, written either mobile-first (`min-width: 768px / 1024px / 1280px`) or desktop-first with the matching maximums (`max-width: 767px / 1023px / 1279px`). The same values apply to `matchMedia()` in JavaScript. `@container` queries (a component reacting to its own width) are allowed and do not count as breakpoints. **Every `max-width` value ends in `.98`** (`767.98px`, `1023.98px`, `1279.98px`), in CSS and in `matchMedia()`: on screens with display scaling (e.g. 150 %) the viewport can be a fraction like 1279.3px, which falls in the gap between `max-width: 1279px` and `min-width: 1280px` so neither layout applies.
 
 ### 6.3 Page grid
 
@@ -285,7 +285,7 @@ Every section uses the same `.container` so all content aligns to the same left/
 | Input | height **48px**, padding 0 12px |
 | Minimum touch target | **44 × 44px** |
 | Hero H1 → buttons | 32px (mobile 24px) |
-| Footer column gap | 28px + 1px divider + 28px |
+| Footer column gap | 40px + 1px divider + 40px (2 columns, ≥ 1280px); stacked: 24px with a 1px top divider and 20px above Contact |
 
 ### 6.5 Shop section layout
 
@@ -421,13 +421,13 @@ The goal of every area: the user sees **only what they need to make the next dec
 Layout (same as the Handypad footer): **2 columns** — brand on the left (`minmax(0, 1fr)`), Contact on the right, only as wide as its longest line (`max-content`), with 40px either side of a 1px divider (`rgba(255,255,255,.12)`); columns stretch to equal height so the divider runs full height. Below 1280px: one column, Contact under a 1px top divider. No tagline, no "About us" column.
 
 ```
-<PRODUCT> by DLV CORPORATION              ← one line: product name 30px/700 white + "by DLV CORPORATION" 20px/600 --red (phone 26 / 16px)
-Tax code: 0307940363                      ← 16px; label muted, number 600 (VI: "Mã số thuế: 0307940363")
+<PRODUCT> by DLV CORPORATION              ← one line: product name --fs-2 28px/700 white + "by DLV CORPORATION" --fs-3 20px/600 --red (phone: 20 / 16px)
+Tax code: 0307940363                      ← --fs-4 16px, 16px below the brand line; label muted, number 600 (VI: "Mã số thuế: 0307940363")
 
 │ CONTACT                                  ← right column, heading 12px uppercase --coral (VI: LIÊN HỆ)
 │ [pin]   29 Nguyen Van Quy Street, Tan Thuan Ward, Ho Chi Minh City, Vietnam   → Google Maps (new tab)
 │ [phone] (+84) 347 099 905   [WhatsApp] [Zalo]                                → tel: / wa.me/84347099905 / zalo.me/2640689488672783975 (Zalo OA)
-│ [mail]  info@dlvcorp.com                                                      → mailto:   (contact text 16px)
+│ [mail]  info@dlvcorp.com                                                      → mailto:   (contact text --fs-4 16px, icons 18px --coral)
 
 © <current year> DLV Corporation. All rights reserved.       ← centred under a divider; VI: "Bảo lưu mọi quyền."
 ```
@@ -639,9 +639,10 @@ Country MUST sit directly before City / Province (same row on desktop/tablet: Co
 - [ ] All images are from `src/assets/products/<slug>/` or the product's data — list any missing.
 - [ ] `grep` shows only the 5 font-size tokens and the 9 spacing values; no `clamp()`, no `vw` font sizes.
 - [ ] Only Be Vietnam Pro (and at most one approved second font) is loaded.
-- [ ] Only the 3 breakpoints (+ footer 1296px rule) are used.
+- [ ] Only the 3 breakpoints are used (no extra footer breakpoint).
 - [ ] Every UI string has a Vietnamese translation; `?lang=vi` renders with VND prices.
 - [ ] Footer copy is byte-identical to §10; year is dynamic.
+- [ ] Footer matches the Handypad layout (§10): ≥ 1280px brand + tax code left, Contact right behind a 1px divider; below 1280px stacked; no tagline, no About us column; "<PRODUCT> by DLV CORPORATION" on one line from 768px.
 - [ ] No orphan words in headings at 1440 / 1024 / 390px; units, phones, codes never split.
 - [ ] One item = one line (§5.4 rule 3): measure the line count of the address, company name, phone, email and every button at 1440, 1280, 1279, 1100, 1024, 1023, 768, 767, 390 and 360px in EN and VI — 1 line everywhere from 768px up; on phones the address breaks only between its parts. Also proofread every visible string for typos and stray breaks before hand-off.
 - [ ] Breakpoints: no `max-width` without `.98`; test once at a fractional width (browser zoom or 150 % display scaling) that the layout changes exactly at 768 / 1024 / 1280.
@@ -680,7 +681,7 @@ Status after the alignment pass of 2026-09-24.
 | Area | Now | Where |
 |---|---|---|
 | Font | Be Vietnam Pro 400 / 600 / 700, self-hosted with Vietnamese + Latin subsets, 2 files preloaded | `assets/fonts/`, `src/styles/fonts.css`, `index.html` |
-| Breakpoints | only 767 / 1023 / 1279 (+ footer 1296); JS `matchMedia` uses the same | all stylesheets, `header.js`, `order-summary.js`, `product-search.js` |
+| Breakpoints | only 767.98 / 1023.98 / 1279.98; JS `matchMedia` uses the same | all stylesheets, `header.js`, `order-summary.js`, `product-search.js` |
 | Spacing | fixed per breakpoint — gutter 48 / 32 / 16, header 80 / 72 / 64, section padding 96 / 64 / 48, hero 64 / 48 / 40, shop summary column 360 / 320 / 280 | `tokens.css`, `hero.css`, `sign-construction.css`, `order-summary.css`, `footer.css` |
 | Asset names | `theme-*` shared backgrounds; product photos in `src/assets/products/hyperion/`; contact icons in `assets/icons/` | `src/assets/` |
 | Footer year | computed automatically | `footer.js` |

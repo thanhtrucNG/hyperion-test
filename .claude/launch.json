@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "hyperion", "runtimeExecutable": "python", "runtimeArgs": ["-m", "http.server", "8080"], "port": 8080 }
+    { "name": "hyperion", "runtimeExecutable": "python", "runtimeArgs": ["-m", "http.server", "8080"], "port": 8080 },
+    { "name": "hyperion-node", "runtimeExecutable": "C:/Users/Latitude 5410/Documents/leadpage/IMO-Signs/imo-safety-signs/.tools/node-v24.21.0-win-x64/node.exe", "runtimeArgs": ["C:/Users/LATITU~1/AppData/Local/Temp/claude/C--Users-Latitude-5410-Downloads-hyperion-imo-signs/9551edf1-ad95-475e-af31-618ca9bc132e/scratchpad/serve.mjs", "C:/Users/Latitude 5410/Downloads/hyperion-imo-signs", "8090"], "port": 8090 }
   ]
 }
