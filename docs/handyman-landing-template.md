@@ -419,7 +419,7 @@ The goal of every area: the user sees **only what they need to make the next dec
 
 ## 10. Footer (fixed copy — do not edit per product)
 
-Layout: 3 columns in fixed proportions brand 1 : about 1 : contact 1.3, 40px either side of each 1px divider (`rgba(255,255,255,.12)`); columns stretch to equal height so dividers run full height. Tablet: brand full width, Company | Contact below. Mobile: one column with 1px top dividers.
+Layout: 3 columns — brand and About us only as wide as their text (`max-content`), Contact takes the remaining width; 48px either side of each 1px divider (`rgba(255,255,255,.12)`); columns stretch to equal height so dividers run full height. Tablet: brand full width, Company | Contact below. Mobile: one column with 1px top dividers.
 
 ```
 <PRODUCT> by DLV Corporation              ← brand title (fs-3, "by DLV Corporation" on its own line in --red)

@@ -9,16 +9,16 @@
   padding-block: 40px 16px;
 }
 
-/* Three proportioned columns (brand 1 : about 1 : contact 1.3) with even 40px spacing either side of each divider. */
+/* Brand and About us are only as wide as their text; Contact takes the rest. 48px either side of each divider. */
 .footer-columns {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr);
-  column-gap: 40px;
+  grid-template-columns: max-content max-content minmax(0, 1fr);
+  column-gap: 48px;
   align-items: stretch; /* equal column heights, so both dividers run full height */
 }
 
 .footer-columns > * + * {
-  padding-left: 40px;
+  padding-left: 48px;
   border-left: 1px solid rgba(255,255,255,.12);
 }
 
