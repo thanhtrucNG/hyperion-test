@@ -419,7 +419,7 @@ The goal of every area: the user sees **only what they need to make the next dec
 
 ## 10. Footer (fixed copy — do not edit per product)
 
-Layout: 3 columns separated by 1px dividers (`rgba(255,255,255,.12)`), columns size to their content, space distributed between them. Tablet: brand full width, Company | Contact below. Mobile: one column with 1px top dividers.
+Layout: 3 columns in fixed proportions brand 1 : about 1 : contact 1.3, 40px either side of each 1px divider (`rgba(255,255,255,.12)`); columns stretch to equal height so dividers run full height. Tablet: brand full width, Company | Contact below. Mobile: one column with 1px top dividers.
 
 ```
 <PRODUCT> by DLV Corporation              ← brand title (fs-3, "by DLV Corporation" on its own line in --red)
@@ -438,7 +438,7 @@ CONTACT
 ```
 
 - Source of truth: `src/data/corporate.js`. Agents MUST NOT retype these strings elsewhere.
-- Company legal names: single line at ≥ 1296px (`white-space: nowrap`), wrap below. Address: always two fixed lines, broken after the ward ("29 …, Tan Thuan Ward," / "Ho Chi Minh City, Vietnam"), each line unbroken at ≥ 1296px. Brand column max 200px on desktop (tagline may break after its first sentence).
+- Company legal names: single line at ≥ 1296px (`white-space: nowrap`), wrap below. Address: always two fixed lines, broken after the ward ("29 …, Tan Thuan Ward," / "Ho Chi Minh City, Vietnam"), each line unbroken at ≥ 1296px.
 - VI page shows the Vietnamese address (`corporate.address_vi`); the map link always searches the English address.
 - The year is computed at build/runtime, never hard-coded (**Hyperion deviation:** currently hard-coded `2026`).
 

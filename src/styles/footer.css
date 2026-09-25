@@ -14,7 +14,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr);
   column-gap: 40px;
-  align-items: start;
+  align-items: stretch; /* equal column heights, so both dividers run full height */
 }
 
 .footer-columns > * + * {
