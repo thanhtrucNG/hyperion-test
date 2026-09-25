@@ -336,7 +336,7 @@ Rules:
 - Every visible string goes through `t()` in `src/lib/locale.js` and MUST have a Vietnamese entry. No hard-coded UI text in components.
 - Product data uses paired fields (`display_name_en` / `display_name_vi`, `label_en` / `label_vi`). Both are required.
 - Currency follows language: EN → **USD** (`US$`), VI → **VND** (`₫`, dot thousands separator).
-- Do not mix languages in one view, except: product codes (IMPA, ISSA), brand names (HYPERION, WhatsApp, Zalo, Visa), and the company's legal names in the footer (both always shown).
+- Do not mix languages in one view, except: product codes (IMPA, ISSA), brand names (HYPERION, WhatsApp, Zalo, Visa), and the company's legal name in the footer (`DLV CORPORATION`, same in both languages).
 - Vietnamese copy is written, not machine-translated word-for-word; keep the same length ±20% so layouts hold.
 - Catalogue link serves `-vi.pdf` when the language is VI and that file exists, otherwise the EN PDF.
 
@@ -426,7 +426,6 @@ Layout: 3 columns separated by 1px dividers (`rgba(255,255,255,.12)`), columns s
 <product tagline EN/VI>                   ← fs-5, the only per-product footer text
 
 ABOUT US                                  ← column heading, fs-5, uppercase, --coral (VI: VỀ CHÚNG TÔI)
-CÔNG TY CP ĐẦU TƯ THƯƠNG MẠI DỊCH VỤ VÀ TƯ VẤN ĐỖ LÊ VŨ
 DLV CORPORATION
 Tax code: 0307940363                      ← VI: "Mã số thuế: 0307940363"
 

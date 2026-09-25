@@ -9,23 +9,20 @@
   padding-block: 40px 16px;
 }
 
-/* Columns size to their content so the brand column stays narrow and
-   Company / Contact get the room they need; leftover space sits between them. */
+/* Three proportioned columns (brand 1 : about 1 : contact 1.3) with even 40px spacing either side of each divider. */
 .footer-columns {
   display: grid;
-  grid-template-columns: auto auto auto;
-  justify-content: space-between;
-  column-gap: 28px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr);
+  column-gap: 40px;
   align-items: start;
 }
 
 .footer-columns > * + * {
-  padding-left: 28px;
+  padding-left: 40px;
   border-left: 1px solid rgba(255,255,255,.12);
 }
 
-/* At full container width (1200px) the legal names stay on one line; the address is two fixed lines. */
-.footer-brand { max-width: 200px; }
+/* The address is two fixed lines; each line stays unbroken at full container width. */
 .address-line { display: block; }
 @media (min-width: 1296px) {
   .footer-legal,
