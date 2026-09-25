@@ -8,7 +8,7 @@ export function contactOptionLinks(baseURL = './') {
   return [
     { key: 'phone', icon: 'phone.png', title: t('Call us'), detail: corporate.phone, href: corporate.phone_href },
     { key: 'whatsapp', icon: 'whatsapp.png', title: 'WhatsApp', detail: t('Chat on WhatsApp'), href: `https://wa.me/${digits}`, external: true },
-    { key: 'zalo', icon: 'zalo.png', title: 'Zalo', detail: t('Chat on Zalo'), href: `https://zalo.me/${digits.replace(/^84/, '0')}`, external: true },
+    { key: 'zalo', icon: 'zalo.png', title: 'Zalo', detail: t('Chat on Zalo'), href: corporate.zalo_url, external: true },
   ].map(option => {
     const link = element('a', `contact-option contact-option-${option.key}`);
     link.href = option.href;

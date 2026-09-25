@@ -35,7 +35,7 @@ Every product site has exactly these sections, in this order. Do not add, remove
 
 **Header**
 - Left: Handyman logo (`assets/handyman-logo.png`, links to `./`).
-- Right, in order: nav links `PRODUCT LOOKUP` (→ `#product-query`), `ORDER` (→ `#find-your-sign`) — both glide per §11.1, `CATALOGUE` (downloads the product PDF) · language switch `EN | VI` · `CONTACT SALES` button — opens a small panel with three direct contact options, each with its app icon: **Call us** (tel:), **WhatsApp** (wa.me), **Zalo** (zalo.me). No contact form. Desktop: dropdown under the button (300px wide). Below 1024px: the options open inline under the menu's `CONTACT SALES` button. Closes on outside click, Escape (focus returns to the button) and after an option is picked. Component: `src/components/contact-options.js`; icons: `assets/icons/{phone,whatsapp,zalo}.png` (shared, 96×96 transparent PNG, shown at 40px).
+- Right, in order: nav links `PRODUCT LOOKUP` (→ `#product-query`), `ORDER` (→ `#find-your-sign`) — both glide per §11.1, `CATALOGUE` (downloads the product PDF) · language switch `EN | VI` · `CONTACT SALES` button — opens a small panel with three direct contact options, each with its app icon: **Call us** (tel:), **WhatsApp** (wa.me), **Zalo** (the company's Zalo OA, `corporate.zalo_url`). No contact form. Desktop: dropdown under the button (300px wide). Below 1024px: the options open inline under the menu's `CONTACT SALES` button. Closes on outside click, Escape (focus returns to the button) and after an option is picked. Component: `src/components/contact-options.js`; icons: `assets/icons/{phone,whatsapp,zalo}.png` (shared, 96×96 transparent PNG, shown at 40px).
 - Below 1024px: nav links + Contact Sales collapse into a `Menu` button dropdown; language switch stays visible.
 
 **Hero**
@@ -431,7 +431,7 @@ Tax code: 0307940363                      ← VI: "Mã số thuế: 0307940363"
 
 CONTACT
 [pin]   29 Nguyen Van Quy Street, Tan Thuan Ward, Ho Chi Minh City, Vietnam   → Google Maps (new tab)
-[phone] (+84) 347 099 905   [WhatsApp] [Zalo]                                → tel: / wa.me/84347099905 / zalo.me/0347099905
+[phone] (+84) 347 099 905   [WhatsApp] [Zalo]                                → tel: / wa.me/84347099905 / zalo.me/2640689488672783975 (Zalo OA)
 [mail]  info@dlvcorp.com                                                      → mailto:
 
 © <current year> DLV Corporation. All rights reserved.       ← VI: "Bảo lưu mọi quyền."
