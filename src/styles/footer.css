@@ -9,24 +9,25 @@
   padding-block: 40px 16px;
 }
 
-/* Brand and About us are only as wide as their text; Contact takes the rest. 48px either side of each divider. */
+/* Two columns (Handypad footer standard): brand + tax code on the left, Contact on the right,
+   only as wide as its longest line, with a divider 40px either side. */
 .footer-columns {
   display: grid;
-  grid-template-columns: max-content max-content minmax(0, 1fr);
-  column-gap: 48px;
-  align-items: stretch; /* equal column heights, so both dividers run full height */
+  grid-template-columns: minmax(0, 1fr) max-content;
+  column-gap: 40px;
+  align-items: stretch; /* equal column heights, so the divider runs full height */
 }
 
-.footer-columns > * + * {
-  padding-left: 48px;
+.footer-contact {
+  padding-left: 40px;
   border-left: 1px solid rgba(255,255,255,.12);
 }
 
-/* One piece of information = one line: company name, address, phone and email never wrap from 768px up
+/* One piece of information = one line: brand line, address, phone and email never wrap from 768px up
    (the layout below guarantees the room). On phones the address breaks only between street / ward / city. */
 .address-line { display: inline; }
 @media (min-width: 768px) {
-  .footer-legal,
+  .footer-brand-title,
   a.contact-value {
     white-space: nowrap;
   }
@@ -42,20 +43,11 @@
 }
 
 .footer-brand-secondary {
-  display: block;
-  margin-top: 4px;
+  margin-left: 4px;
   color: var(--hyperion-red, #e63720);
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   letter-spacing: 0;
-}
-
-.footer-tagline {
-  margin: 14px 0 0;
-  color: rgba(255,255,255,.72);
-  font-size: 14px;
-  line-height: 1.5;
-  font-weight: 500;
 }
 
 .footer-heading {
@@ -68,21 +60,9 @@
   text-transform: uppercase;
 }
 
-.footer-legal {
-  margin: 0;
-  color: rgba(255,255,255,.92);
-  font-size: 14px;
-  line-height: 1.5;
-  font-weight: 600;
-}
-
-.footer-legal + .footer-legal {
-  margin-top: 4px;
-}
-
 .footer-tax {
-  margin: 8px 0 0;
-  font-size: 14px;
+  margin: 16px 0 0;
+  font-size: 16px;
   line-height: 1.45;
 }
 
@@ -137,7 +117,7 @@ a.contact-value {
   min-height: 0;
   padding: 0;
   color: rgba(255,255,255,.92);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
   font-weight: 400;
   text-decoration: none;
@@ -191,43 +171,16 @@ a.contact-chat-link:focus-visible {
   text-align: center;
 }
 
-/* 1024–1279px: brand across the top, About us | Contact below, so the address keeps one line. */
+/* Below 1280px the address no longer fits beside the brand: stack, Contact under a top divider. */
 @media (max-width: 1279.98px) {
   .footer-columns {
-    grid-template-columns: max-content minmax(0, 1fr);
-    gap: 28px 48px;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 24px;
   }
 
-  .footer-brand {
-    grid-column: 1 / -1;
-  }
-
-  .footer-columns > * + * {
-    padding-left: 0;
+  .footer-contact {
+    padding: 20px 0 0;
     border-left: 0;
-  }
-
-  .footer-columns > .footer-contact {
-    padding-left: 48px;
-    border-left: 1px solid rgba(255,255,255,.12);
-  }
-}
-
-/* Below 1024px: one column, so every line has the full width. */
-@media (max-width: 1023.98px) {
-  .footer-columns {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .footer-columns > .footer-contact {
-    padding-left: 0;
-    border-left: 0;
-  }
-
-  .footer-identity,
-  .footer-columns > .footer-contact {
-    padding-top: 20px;
     border-top: 1px solid rgba(255,255,255,.12);
   }
 }
@@ -236,6 +189,9 @@ a.contact-chat-link:focus-visible {
   .footer-inner {
     padding-block: 32px 16px;
   }
+
+  .footer-brand-title { font-size: 26px; }
+  .footer-brand-secondary { font-size: 16px; }
 
   .address-line { display: block; white-space: nowrap; }
 }

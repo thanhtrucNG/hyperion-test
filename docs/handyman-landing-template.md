@@ -365,7 +365,6 @@ Translate the **meaning in context**, not the words. Before writing a Vietnamese
 | Product range | Dòng sản phẩm | |
 | Catalogue | catalogue | loanword, lowercase in sentences |
 | Contact sales | Liên hệ sales | approved by the business; "sales" stays in English |
-| About us (footer column heading) | Về chúng tôi | not "Công ty" — "Company / Công ty" is only the checkout form field |
 | Contact & Shipping | Thông tin liên hệ & giao hàng | |
 | City / Province | Tỉnh / Thành phố | |
 | Country | Quốc gia | |
@@ -419,28 +418,24 @@ The goal of every area: the user sees **only what they need to make the next dec
 
 ## 10. Footer (fixed copy — do not edit per product)
 
-Layout: 3 columns — brand and About us only as wide as their text (`max-content`), Contact takes the remaining width; 48px either side of each 1px divider (`rgba(255,255,255,.12)`); columns stretch to equal height so dividers run full height. Tablet: brand full width, Company | Contact below. Mobile: one column with 1px top dividers.
+Layout (same as the Handypad footer): **2 columns** — brand on the left (`minmax(0, 1fr)`), Contact on the right, only as wide as its longest line (`max-content`), with 40px either side of a 1px divider (`rgba(255,255,255,.12)`); columns stretch to equal height so the divider runs full height. Below 1280px: one column, Contact under a 1px top divider. No tagline, no "About us" column.
 
 ```
-<PRODUCT> by DLV Corporation              ← brand title (fs-3, "by DLV Corporation" on its own line in --red)
-<product tagline EN/VI>                   ← fs-5, the only per-product footer text
+<PRODUCT> by DLV CORPORATION              ← one line: product name 30px/700 white + "by DLV CORPORATION" 20px/600 --red (phone 26 / 16px)
+Tax code: 0307940363                      ← 16px; label muted, number 600 (VI: "Mã số thuế: 0307940363")
 
-ABOUT US                                  ← column heading, fs-5, uppercase, --coral (VI: VỀ CHÚNG TÔI)
-DLV CORPORATION
-Tax code: 0307940363                      ← VI: "Mã số thuế: 0307940363"
+│ CONTACT                                  ← right column, heading 12px uppercase --coral (VI: LIÊN HỆ)
+│ [pin]   29 Nguyen Van Quy Street, Tan Thuan Ward, Ho Chi Minh City, Vietnam   → Google Maps (new tab)
+│ [phone] (+84) 347 099 905   [WhatsApp] [Zalo]                                → tel: / wa.me/84347099905 / zalo.me/2640689488672783975 (Zalo OA)
+│ [mail]  info@dlvcorp.com                                                      → mailto:   (contact text 16px)
 
-CONTACT
-[pin]   29 Nguyen Van Quy Street, Tan Thuan Ward, Ho Chi Minh City, Vietnam   → Google Maps (new tab)
-[phone] (+84) 347 099 905   [WhatsApp] [Zalo]                                → tel: / wa.me/84347099905 / zalo.me/2640689488672783975 (Zalo OA)
-[mail]  info@dlvcorp.com                                                      → mailto:
-
-© <current year> DLV Corporation. All rights reserved.       ← VI: "Bảo lưu mọi quyền."
+© <current year> DLV Corporation. All rights reserved.       ← centred under a divider; VI: "Bảo lưu mọi quyền."
 ```
 
-- Source of truth: `src/data/corporate.js`. Agents MUST NOT retype these strings elsewhere.
-- Company name, address, phone, email: **one line each from 768px up** (`white-space: nowrap`; the column layout guarantees the room: 3 columns ≥ 1280px, brand row + About us | Contact at 1024–1279px, stacked below 1024px). On phones the address breaks only between street / ward / city, country — three whole lines.
+- Source of truth: `src/data/corporate.js` (`legal_en` for "DLV CORPORATION", `tax_code`, addresses, phone, email, `zalo_url`). Agents MUST NOT retype these strings elsewhere.
+- Brand line, address, phone, email: **one line each from 768px up** (`white-space: nowrap`; the layout guarantees the room: 2 columns ≥ 1280px, stacked below). On phones the address breaks only between street / ward / city, country — three whole lines.
 - VI page shows the Vietnamese address (`corporate.address_vi`); the map link always searches the English address.
-- The year is computed at build/runtime, never hard-coded (**Hyperion deviation:** currently hard-coded `2026`).
+- The year is computed at runtime (`new Date().getFullYear()`), never hard-coded.
 
 ---
 
@@ -457,7 +452,7 @@ CONTACT
 | Payment amount (full / deposit) | 1 column | 2 columns | 2 columns |
 | Payment methods | 1 column | 1 column | 1 column |
 | Order summary | Bottom bar → sheet | Sticky 280px | Sticky 320 / 360px |
-| Footer | 1 column (address on 3 whole lines) | 1 column | 1024–1279: brand row, then About us and Contact side by side · ≥ 1280: 3 columns |
+| Footer | 1 column (address on 3 whole lines) | 1 column | 1024–1279: 1 column · ≥ 1280: brand left, Contact right (2 columns) |
 
 - No horizontal scrolling at any width ≥ 360px (`document.documentElement.scrollWidth === innerWidth`).
 - Sticky elements must never cover a focused input (`scroll-padding-top: header + 20px`, `scroll-padding-bottom: 100px` on mobile).
@@ -696,5 +691,5 @@ Status after the alignment pass of 2026-09-24.
 | Checkout | Country → City / Province → Address; province dropdown for VN (34), US (51), CA (13), AU (8), MY (16); free text elsewhere; clear-on-change, keep-on-reselect; all 10 tests of §12.1 passed (scripted + real mouse/keyboard) | `src/checkout/regions.js`, `components/region-select.js`, `order-completion.js`, `checkout-store.js`, `order-draft.js` |
 | CONTACT SALES | three direct options (call, WhatsApp, Zalo) with icons; contact form removed; VI label "LIÊN HỆ SALES" (approved term) | `components/contact-options.js`, `header.css` |
 | Headings | balanced lines, no orphan words (`text-wrap: balance` / `pretty`) | `base.css` |
-| Footer headings | "ABOUT US / VỀ CHÚNG TÔI" and "CONTACT / LIÊN HỆ"; VI page shows the Vietnamese address | `footer.js`, `corporate.js`, `locale.js` |
-| Earlier fixes | smooth section scrolling (§11.1), Payment step uses the shared step styles (§6.6), no "Continue to payment" button, mobile order bar hidden until the first item, compact locked steps, 3-column footer with fixed copy (§10) | — |
+| Footer | Handypad layout: "HYPERION by DLV CORPORATION" + tax code left, CONTACT / LIÊN HỆ right; no tagline, no About us column; VI page shows the Vietnamese address | `footer.js`, `footer.css`, `corporate.js`, `locale.js` |
+| Earlier fixes | smooth section scrolling (§11.1), Payment step uses the shared step styles (§6.6), no "Continue to payment" button, mobile order bar hidden until the first item, compact locked steps, 2-column Handypad-style footer with fixed copy (§10) | — |
