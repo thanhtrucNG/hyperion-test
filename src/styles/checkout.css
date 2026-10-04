@@ -8,6 +8,12 @@
 .shipping-field input, .transfer-reference input { min-width: 0; width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid #8c9eac; background: white; }
 .shipping-field input[aria-invalid='true'] { border-color: var(--accent-dark); }
 .field-error { font-size: var(--text-xs); color: var(--accent-dark); }
+/* Optional VAT invoice: a checkbox row under the address; ticking it reveals the Tax code field. */
+.invoice-option { gap: 4px; }
+.shipping-field .invoice-check { display: inline-flex; align-items: center; gap: 10px; width: fit-content; min-height: 32px; font-size: var(--text-base); font-weight: 600; cursor: pointer; }
+.shipping-field .invoice-check input { flex: none; width: 20px; min-width: 20px; height: 20px; min-height: 20px; margin: 0; padding: 0; accent-color: var(--hyperion-red, #e63720); cursor: pointer; }
+.invoice-hint { padding-left: 30px; color: var(--muted); font-size: var(--text-sm); line-height: 1.4; }
+.shipping-field[hidden] { display: none; }
 .shipping-fee { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: var(--text-sm); border-top: 1px solid var(--line); padding-top: var(--space-3); }
 .payment-choice-group { min-width: 0; margin: 0; padding: 0; border: 0; }
 #order-payment { container-type: inline-size; }
@@ -18,14 +24,13 @@
 .payment-choice { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; min-height: 90px; padding: 14px; border: 1px solid #d3dfe7; border-radius: 12px; background: #f6f8fa; color: var(--navy-dark); font-size: var(--text-sm); text-align: left; }
 .payment-choice:hover:not(:disabled) { border-color: #8298a8; }
 .payment-choice:disabled { background: #edf0f2; border-color: #d6dde2; color: #66727c; cursor: not-allowed; }
-.payment-choice:disabled .payment-choice-title, .payment-choice:disabled .payment-choice-price { color: #66727c; }
+.payment-choice:disabled .payment-choice-title { color: #66727c; }
 .payment-choice:disabled .payment-card-logos, .payment-choice:disabled .payment-choice-copy > .payment-logo { opacity: .5; }
 .method-availability { font-size: var(--text-xs); color: var(--muted); }
 .payment-choice[aria-pressed='true'] { border-color: #ff4438; background: #fff7f5; box-shadow: inset 0 0 0 1px #ff4438; }
 .payment-choice-copy { display: grid; min-width: 0; gap: 4px; }
 .payment-choice-title { font-size: var(--text-base); font-weight: 700; }
 .payment-choice-description { color: #667f91; font-weight: 400; line-height: 1.4; }
-.payment-choice-price { flex-shrink: 0; color: var(--accent-action); font-size: var(--text-xl); font-weight: 700; white-space: nowrap; }
 .payment-methods { margin-top: 6px; }
 .payment-methods .payment-choices { grid-template-columns: 1fr; grid-auto-rows: 1fr; gap: 10px; }
 .payment-methods .payment-choice { display: grid; grid-template-columns: 20px minmax(0, 1fr); align-content: center; gap: 4px 12px; min-height: 76px; padding: 12px 14px; border-radius: 10px; }
@@ -76,8 +81,6 @@
 }
 @container (max-width: 620px) {
   .payment-group-hint { display: block; float: none; line-height: 1.5; margin-top: 4px; }
-  .payment-amounts .payment-choice { flex-direction: column; align-items: stretch; }
-  .payment-choice-price { margin-left: auto; }
 }
 @container (max-width: 500px) { .payment-methods .payment-choices { grid-template-columns: 1fr; } }
 
@@ -114,6 +117,9 @@
 .simulation-gateway { display: grid; justify-items: center; gap: 16px; padding: 18px; border: 1px solid #708899; border-radius: 8px; }
 .simulation-gateway .button { margin-top: 0; width: 100%; }
 .zalopay-gateway-logo { width: min(150px, 52%); height: auto; object-fit: contain; }
+/* The pop-up is dark navy; the logo's dark-blue lettering needs a white plate to stay readable. */
+.paypal-modal-logo { display: block; box-sizing: content-box; width: min(150px, 50%); height: auto; margin: 4px auto 0; padding: 12px 20px; border-radius: 8px; background: #fff; }
+.paypal-modal-note { margin: 12px 0 0; text-align: center; line-height: 1.5; }
 .bank-modal-no-qr { grid-template-columns: 1fr; }
 .bank-modal-no-qr .bank-modal-qr { display: none; }
 @media (max-width: 767.98px) {
@@ -138,31 +144,20 @@
   .bank-copy-value { justify-content: flex-end; }
 }
 
-/* Preserve the approved Phase 15 payment presentation. */
-.payment-amounts .payment-choice { min-height: 82px; padding: 12px 16px; flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; }
-.payment-amounts .payment-choice-copy { display: block; }
-.payment-amounts .payment-choice-title { font-size: var(--text-base); line-height: 1.25; }
-.payment-amounts .payment-choice-price { margin: 0; font-size: var(--text-xl); line-height: 1.2; }
-.payment-methods .payment-choice { grid-template-columns: 20px 40px minmax(0,1fr) auto; align-items: center; align-content: center; column-gap: 12px; min-height: 62px; padding: 6px 12px; }
+/* Payment rows: radio · square app-style icon · name (template §12.3). */
+.payment-methods .payment-choice { grid-template-columns: 20px 48px minmax(0,1fr); align-items: center; align-content: center; column-gap: 14px; min-height: 64px; padding: 8px 16px; text-align: left; }
 .payment-methods .payment-method-indicator { grid-column: 1; grid-row: 1; }
-.payment-method-icon { grid-column: 2; display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #d8e1e7; border-radius: 10px; background: #f8fafb; color: var(--navy); }
-.payment-method-icon .icon { width: 23px; height: 23px; }
-.payment-methods .payment-choice-copy { grid-column: 3; display: grid; gap: 3px; align-content: center; }
-.payment-methods .payment-choice-title { font-size: var(--text-base); line-height: 1.25; }
+.payment-method-logo { grid-column: 2; display: block; width: 48px; height: 48px; border-radius: 11px; overflow: hidden; }
+.payment-method-logo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* VietQR is a wordmark on a transparent square: give it the white tile and hairline the others have built in. */
+.payment-method-logo-bank_transfer { background: #fff; box-shadow: inset 0 0 0 1px #d8e1e7; }
+.payment-choice:disabled .payment-method-logo { opacity: .5; }
+.payment-methods .payment-choice-copy { grid-column: 3; display: grid; gap: 2px; align-content: center; }
+.payment-methods .payment-choice-title { font-size: var(--text-base); line-height: 1.3; }
 .payment-methods .method-availability { grid-column: auto; font-size: var(--text-xs); }
-.payment-methods .payment-method-brands { grid-column: 4; display: flex; align-items: center; justify-content: flex-end; gap: 7px; min-width: 74px; }
-.payment-methods .payment-logo-visa { width: 62px; }
-.payment-methods .payment-logo-mastercard { width: 38px; }
-.payment-methods .payment-logo-zalopay { flex-basis: 76px; }
-.payment-methods .payment-logo-vietqr { flex-basis: 68px; }
-.payment-methods .payment-choice[aria-pressed='true'] .payment-method-icon { border-color: #ffb6a7; background: #fffaf8; color: var(--accent); }
 @container (max-width: 460px) {
-  .payment-methods .payment-choice { grid-template-columns: 20px 38px minmax(0,1fr) auto; gap: 8px; min-height: 58px; padding: 6px 9px; }
-  .payment-method-icon { width: 38px; height: 38px; }
-  .payment-methods .payment-logo-visa { width: 54px; }
-  .payment-methods .payment-logo-mastercard { width: 32px; }
-  .payment-methods .payment-logo-zalopay { flex-basis: 68px; }
-  .payment-methods .payment-logo-vietqr { flex-basis: 62px; }
+  .payment-methods .payment-choice { grid-template-columns: 20px 44px minmax(0,1fr); column-gap: 10px; min-height: 60px; padding: 8px 12px; }
+  .payment-method-logo { width: 44px; height: 44px; border-radius: 10px; }
 }
 
 

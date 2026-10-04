@@ -61,7 +61,7 @@
 | EN | VI | Note |
 |---|---|---|
 | HYPERION BY HANDYMAN | HYPERION BY HANDYMAN | Same in both (brand) |
-| Marine safety signs | Biển báo an toàn hàng hải |  |
+| Safety signs | Biển báo an toàn |  |
 | for onboard safety, emergency response and wayfinding. | cho an toàn trên tàu, ứng phó khẩn cấp và chỉ dẫn. |  |
 | Find your sign | Tìm biển báo | Shown in capitals |
 | Download catalogue | Tải catalogue | Shown in capitals |
@@ -82,7 +82,7 @@
 | Suitable for marine use | Phù hợp cho môi trường hàng hải |  |
 | Resistant to saltwater, UV and demanding offshore conditions. | Chịu được nước mặn, tia UV và điều kiện ngoài khơi khắc nghiệt. |  |
 | View Catalogue | Xem catalogue |  |
-| [alt] Layered Lower Rescue Boat marine safety sign showing Hyperion sign construction. | [alt] Minh họa cấu tạo nhiều lớp của biển báo an toàn hàng hải Lower Rescue Boat. |  |
+| [alt] Layered Lower Rescue Boat safety sign showing Hyperion sign construction. | [alt] Minh họa cấu tạo nhiều lớp của biển báo an toàn Lower Rescue Boat. |  |
 | PEOPLE SAFETY PROGRESS | CON NGƯỜI · AN TOÀN · TIẾN BỘ |  |
 
 ### Contact sales options

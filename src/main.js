@@ -4,6 +4,15 @@ const productsURL = './src/data/products.json';
 const familiesURL = './src/data/families.json';
 const taxonomyURL = './src/data/taxonomy.json';
 const configuratorURL = './src/data/configurator.json';
+// Every price shown is the list price in products.json × PRICE_FACTOR (template §12.2: 10% off from 2026-10-03).
+// The data keeps the list prices; ending or changing the discount = changing this one number.
+const PRICE_FACTOR = 0.9;
+const pricePercent = Math.round(PRICE_FACTOR * 100);
+// VND to the whole đồng, USD to the cent. Integer maths so a half rounds up reliably (2.85 → 256.5¢ → 2.57).
+const discounted = ({ VND, USD }) => ({
+  VND: Math.round(VND * pricePercent / 100),
+  USD: Math.round(Math.round(USD * 100) * pricePercent / 100) / 100,
+});
 import { createCatalogue } from './lib/product-catalogue.js';
 import { createCartStore } from './cart/cart-store.js';
 import { checkoutConfig } from './checkout/config.js';
@@ -61,11 +70,13 @@ function announce(message) {
 }
 
 async function start() {
-  const [products, families, taxonomy, mapping] = await Promise.all([productsURL, familiesURL, taxonomyURL, configuratorURL].map(async url => {
+  const [listProducts, families, taxonomy, mapping] = await Promise.all([productsURL, familiesURL, taxonomyURL, configuratorURL].map(async url => {
     const response = await fetch(url);
     if (!response.ok) throw new Error('Catalogue request failed.');
     return response.json();
   }));
+  // The one place prices enter the app: search, configurator, cart, summary and checkout all read these.
+  const products = listProducts.map(product => product.prices ? { ...product, prices: discounted(product.prices) } : product);
   const catalogue = createCatalogue(products);
   let storage;
   try { storage = window.localStorage; } catch { /* Session-only cart remains usable. */ }

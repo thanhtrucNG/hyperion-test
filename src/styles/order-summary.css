@@ -4,11 +4,16 @@
 .shopping-main > .configurator { margin-bottom: 0; }
 .configurator-main, .order-summary { min-width: 0; }
 .summary-desktop-slot { display: contents; }
-.summary-shell { --summary-inset: 20px; position: sticky; top: calc(var(--header-height) + 16px); scroll-margin-top: calc(var(--header-height) + 16px); display: flex; flex-direction: column; max-height: calc(100dvh - var(--header-height) - 32px); border: 1px solid #19364b; border-top: 3px solid var(--accent); border-radius: 16px; background: var(--navy-dark); color: white; box-shadow: 0 16px 36px rgb(8 34 56 / 18%); overflow: hidden; }
+.summary-shell { --summary-inset: 20px; position: sticky; top: calc(var(--header-height) + 16px); scroll-margin-top: calc(var(--header-height) + 16px); display: flex; flex-direction: column; border: 1px solid #19364b; border-top: 3px solid var(--accent); border-radius: 16px; background: var(--navy-dark); color: white; box-shadow: 0 16px 36px rgb(8 34 56 / 18%); overflow: hidden; }
 .summary-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--summary-inset); flex-shrink: 0; }
 .summary-header h3 { color: white; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: .2px; }
 .order-counts { margin-top: 6px; color: #b8c8d4; font-size: var(--text-xs); }
-.summary-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #6e8494 var(--navy-dark); }
+/* The product list keeps one height whatever the totals area below it shows ("Estimated total", or "Amount due now"
+   with its two rows, or the ORDER / PAY NOW button): the box grows or shrinks at its bottom edge instead.
+   --summary-chrome = header (88px) + the tallest totals area, so the tallest box still fits under the page header. */
+.summary-shell { --summary-chrome: 320px; }
+.summary-content { max-height: max(200px, calc(100dvh - var(--header-height) - 32px - var(--summary-chrome)));
+  min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #6e8494 var(--navy-dark); }
 .saved-order { padding: 0 12px 12px; }
 .order-empty { padding: 4px 8px 12px; color: #b8c8d4; font-size: var(--text-sm); line-height: 1.6; }
 .order-items { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
@@ -39,6 +44,7 @@
 }
 @media (max-width: 1279.98px) { .shopping-layout { grid-template-columns: minmax(0, 1fr) 320px; } }
 @media (max-width: 1023.98px) {
+  .summary-shell { --summary-chrome: 350px; } /* narrower column: the totals rows wrap */
   .shopping-layout { grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; }
 }
 @media (max-width: 767.98px) {
@@ -54,6 +60,7 @@
   .mobile-summary-action { flex: 0 0 auto; text-align: right; }
   .mobile-order-dialog { inset: auto 0 0; margin: 0; padding: 0; width: 100%; max-width: none; max-height: calc(100dvh - 24px); border: 0; border-radius: 16px 16px 0 0; background: var(--navy-dark); color: white; }
   .mobile-order-dialog::backdrop { background: rgb(8 34 56 / 45%); }
+  .mobile-order-dialog .summary-content { max-height: none; } /* the sheet itself is capped; its list takes the rest */
   .mobile-order-dialog .summary-shell { position: static; max-height: calc(100dvh - 24px); border: 0; border-top: 3px solid var(--accent); border-radius: 0; }
   .summary-close { display: block; min-height: 44px; min-width: 44px; padding: 8px 12px; border: 1px solid #6e8494; background: transparent; color: white; }
   .summary-shell .product-image { width: 40px; height: 40px; }

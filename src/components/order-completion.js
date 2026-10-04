@@ -1,7 +1,8 @@
-import { element, icon } from '../lib/dom.js';
+import { element } from '../lib/dom.js';
 import { language, t } from '../lib/locale.js';
 import { formatPrice } from '../lib/storefront.js';
 import { secureURL } from '../checkout/payment-service.js';
+import { methodOffered } from '../checkout/order-draft.js';
 import { createCountrySelect } from './country-select.js';
 import { createRegionSelect } from './region-select.js';
 import { createPaymentModal } from './payment-modal.js';
@@ -9,15 +10,12 @@ import { paymentErrorMessage } from '../checkout/card-validation.js';
 
 export function createPaymentSummary(order, compact = false) {
   const list = element('dl', compact ? 'payment-summary summary-payment' : 'payment-summary');
-  const p = order.payment;
-  const money = value => value === null ? t('Currently unavailable') : formatPrice(value, order.currency);
   const rows = [
-    ['Merchandise subtotal', money(order.merchandiseSubtotal)],
+    ['Merchandise subtotal', formatPrice(order.merchandiseSubtotal, order.currency)],
     ['Shipping fee', t('To be confirmed')],
-    ['Remaining balance', money(p.remainingProductBalance)],
   ];
   for (const [label, value] of rows) {
-    const row = element('div', label.endsWith('due now') ? 'payment-due-row' : ''); row.append(element('dt', '', t(label)), element('dd', label === 'Shipping fee' ? 'shipping-status' : '', value)); list.append(row);
+    const row = element('div'); row.append(element('dt', '', t(label)), element('dd', label === 'Shipping fee' ? 'shipping-status' : '', value)); list.append(row);
   }
   return list;
 }
@@ -41,15 +39,26 @@ export function createOrderCompletion(checkout) {
   const inputs = new Map(), touched = new Set();
   const markTouched = key => { touched.add(key); render(checkout.getState()); };
   let region = null;
+  // Optional VAT invoice: ticking the box makes Company required and reveals a required Tax code.
+  const invoiceOnly = ['company', 'taxCode'];
+  const invoiceRow = element('div', 'shipping-field shipping-field-wide invoice-option');
+  const invoiceLabel = element('label', 'invoice-check');
+  const invoiceBox = element('input'); invoiceBox.type = 'checkbox'; invoiceBox.id = 'shipping-vat-invoice';
+  const invoiceHint = element('span', 'invoice-hint', t('Uses the details above. Company and tax code are required.')); invoiceHint.id = 'shipping-vat-invoice-hint';
+  invoiceBox.setAttribute('aria-describedby', invoiceHint.id);
+  invoiceLabel.append(invoiceBox, element('span', '', t('I need a VAT invoice')));
+  invoiceRow.append(invoiceLabel, invoiceHint);
   // Fixed order: Country sits directly before City / Province (same row), street address last.
   for (const [group, key, label, autocomplete, type] of [
     ['customer', 'fullName', 'Full Name', 'name', 'text'], ['customer', 'company', 'Company', 'organization', 'text'],
     ['customer', 'email', 'Email', 'email', 'email'], ['customer', 'phone', 'Phone / WhatsApp', 'tel', 'tel'],
     ['shipping', 'country', 'Country', 'country-name', 'text'], ['shipping', 'cityProvince', 'City / Province', null, 'text'],
     ['shipping', 'address', 'Shipping Address', 'street-address', 'text'],
+    // Shown (and required, with Company) only when the VAT invoice box under the address is ticked.
+    ['customer', 'taxCode', 'Tax code', 'off', 'text'],
   ]) {
     const field = element('div', `shipping-field${key === 'address' ? ' shipping-field-wide' : ''}`);
-    const caption = element('label', '', t(label) + (key === 'company' ? '' : ' *'));
+    const caption = element('label', '', t(label) + (invoiceOnly.includes(key) ? '' : ' *'));
     const picker = key === 'country'
       ? createCountrySelect({ onInput: value => checkout.setField(group, key, value), onSelect: code => checkout.selectCountry(code), onBlur: () => markTouched(key) })
       : key === 'cityProvince'
@@ -57,7 +66,7 @@ export function createOrderCompletion(checkout) {
         : null;
     const input = picker?.input ?? element('input'); input.id = `shipping-${key}`; input.name = key; input.type = type;
     if (autocomplete) input.autocomplete = autocomplete;
-    input.required = key !== 'company'; input.maxLength = 500;
+    input.required = !invoiceOnly.includes(key); input.maxLength = key === 'taxCode' ? 24 : 500;
     caption.htmlFor = input.id;
     const error = element('span', 'field-error'); error.id = `${input.id}-error`;
     input.setAttribute('aria-describedby', error.id);
@@ -65,54 +74,50 @@ export function createOrderCompletion(checkout) {
       input.addEventListener('input', () => checkout.setField(group, key, input.value));
       input.addEventListener('blur', () => markTouched(key));
     }
-    field.append(caption, picker?.root ?? input, error); form.append(field); inputs.set(key, { group, input, error });
+    field.append(caption, picker?.root ?? input, error);
+    if (key === 'taxCode') form.append(invoiceRow);
+    form.append(field); inputs.set(key, { group, input, error, field, caption, label });
   }
   shipping.content.append(form);
+  invoiceBox.addEventListener('change', () => {
+    // Ticking with an empty Company shows straight away what is now missing.
+    if (invoiceBox.checked && !checkout.getState().order.customer.company.trim()) touched.add('company');
+    if (!invoiceBox.checked) invoiceOnly.forEach(key => touched.delete(key));
+    checkout.setInvoice(invoiceBox.checked);
+  });
 
-  function choices(title, kind, options, onSelect) {
-    const group = element('fieldset', `payment-choice-group payment-${kind}`);
+  // Payment rows: radio · square app-style icon (assets/pay/) · name.
+  const METHODS = [
+    { value: 'card', label: 'Card (Visa, Mastercard)', logo: 'card.png' },
+    { value: 'paypal', label: 'PayPal', logo: 'paypal.png' },
+    { value: 'zalopay', label: 'ZaloPay', logo: 'zalopay.png' },
+    { value: 'bank_transfer', label: 'Bank Transfer', logo: 'vietqr.png' },
+  ];
+  function choices(title, options, onSelect) {
+    const group = element('fieldset', 'payment-choice-group payment-methods');
     const legend = element('legend');
     legend.append(element('span', 'payment-group-title', t(title)));
     group.append(legend);
     const cards = element('div', 'payment-choices'); const buttons = new Map();
-    for (const [value, label] of options) {
+    for (const { value, label, logo } of options) {
       const button = element('button', 'payment-choice'); button.type = 'button'; button.dataset.value = value;
+      const radio = element('span', 'payment-method-indicator'); radio.setAttribute('aria-hidden', 'true');
+      const tile = element('span', `payment-method-logo payment-method-logo-${value}`);
+      tile.setAttribute('aria-hidden', 'true'); // the row's name already says the brand
+      const image = element('img'); image.src = `${'./'}assets/pay/${logo}`; image.alt = ''; image.width = 48; image.height = 48; tile.append(image);
       const copy = element('span', 'payment-choice-copy');
-      copy.append(element('strong', 'payment-choice-title', t(label)));
-      if (kind === 'amounts') {
-        button.append(copy, element('strong', 'payment-choice-price'));
-      } else {
-        const radio = element('span', 'payment-method-indicator'); radio.setAttribute('aria-hidden', 'true');
-        const tile = element('span', 'payment-method-icon'); tile.setAttribute('aria-hidden', 'true');
-        const methodIcon = value === 'card' ? 'card' : value === 'zalopay' ? 'wallet' : 'bank'; tile.append(icon(methodIcon));
-        const availability = element('span', 'method-availability'); availability.id = `availability-${value}`; copy.append(availability);
-        const brands = element('span', 'payment-method-brands');
-        if (value === 'card') {
-          button.setAttribute('aria-label', t('Card — Visa / Mastercard'));
-          for (const brand of ['visa', 'mastercard']) {
-            const frame = element('span', `payment-logo payment-logo-${brand}`);
-            const image = element('img'); image.src = `${'./'}assets/${brand}.png`; image.alt = brand === 'visa' ? 'Visa' : 'Mastercard';
-            frame.append(image); brands.append(frame);
-          }
-        } else {
-          const brand = value === 'zalopay' ? 'zalopay' : 'vietqr';
-          if (value === 'bank_transfer') button.setAttribute('aria-label', t('Bank Transfer / VietQR'));
-          const frame = element('span', `payment-logo payment-logo-${brand}`);
-          const image = element('img'); image.src = `${'./'}assets/${brand === 'zalopay' ? 'Zalopay-logo.png' : 'vietqr.png'}`;
-          image.alt = value === 'zalopay' ? 'ZaloPay' : 'VietQR'; frame.append(image); brands.append(frame);
-        }
-        button.append(radio, tile, copy, brands); button.setAttribute('aria-describedby', availability.id);
-      }
+      const availability = element('span', 'method-availability'); availability.id = `availability-${value}`;
+      copy.append(element('strong', 'payment-choice-title', t(label)), availability);
+      button.append(radio, tile, copy); button.setAttribute('aria-describedby', availability.id);
       button.setAttribute('aria-pressed', 'false'); button.addEventListener('click', () => onSelect(value));
       cards.append(button); buttons.set(value, button);
     }
     group.append(cards); payment.content.append(group); return buttons;
   }
-  const amounts = choices('Choose payment option', 'amounts', [
-    ['deposit', 'Deposit'],
-    ['full', 'Pay in full'],
-  ], checkout.selectAmount);
-  const methods = choices('Payment method', 'methods', [['card', 'Card'], ['zalopay', 'ZaloPay'], ['bank_transfer', 'Bank Transfer / VietQR']], checkout.selectMethod);
+  // Orders are paid in full: the step goes straight to the payment method and its pay button.
+  // Methods a currency cannot use are left out (PayPal has no VND, so it shows on the USD page only).
+  const currency = checkout.getState().order.currency;
+  const methods = choices('Payment method', METHODS.filter(({ value }) => methodOffered(value, currency)), checkout.selectMethod);
   const cta = element('button', 'button button-primary payment-cta'); cta.type = 'button';
   cta.addEventListener('click', () => modal.open(cta));
   const status = element('p', 'payment-status'); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
@@ -151,14 +156,14 @@ export function createOrderCompletion(checkout) {
       input.setAttribute('aria-invalid', String(invalid)); input.setCustomValidity(state.errors[key] ? t(state.errors[key]) : '');
       error.textContent = invalid ? t(state.errors[key]) : ''; error.hidden = !invalid;
     }
-    for (const [value, button] of amounts) {
-      button.disabled = !state.amountAvailability[value];
-      button.setAttribute('aria-pressed', String(!button.disabled && value === p.amountOption));
+    // VAT invoice: Company gains its asterisk and the Tax code field appears only while the box is ticked.
+    invoiceBox.checked = order.vatInvoice;
+    for (const key of invoiceOnly) {
+      const { input, caption, label } = inputs.get(key);
+      input.required = order.vatInvoice;
+      caption.textContent = t(label) + (order.vatInvoice ? ' *' : '');
     }
-    amounts.get('full').querySelector('.payment-choice-price').textContent = formatPrice(order.merchandiseSubtotal, order.currency);
-    const depositDue = p.depositAmount === null ? null : Math.min(p.depositAmount, order.merchandiseSubtotal);
-    amounts.get('deposit').querySelector('.payment-choice-title').textContent = t('Deposit');
-    amounts.get('deposit').querySelector('.payment-choice-price').textContent = depositDue === null ? '—' : formatPrice(depositDue, order.currency);
+    inputs.get('taxCode').field.hidden = !order.vatInvoice;
     for (const [value, button] of methods) {
       button.disabled = !state.methodAvailability[value];
       button.setAttribute('aria-pressed', String(!button.disabled && value === p.method));
@@ -166,7 +171,7 @@ export function createOrderCompletion(checkout) {
       availability.textContent = button.disabled ? t('Currently unavailable') : '';
       availability.hidden = !button.disabled;
     }
-    cta.textContent = t(busy ? 'Processing…' : p.method === 'card' ? 'Pay by card' : p.method === 'zalopay' ? 'Pay with ZaloPay' : p.method === 'bank_transfer' ? 'View bank transfer details' : 'Select payment method');
+    cta.textContent = t(busy ? 'Processing…' : p.method ? 'Pay' : 'Select a payment method');
     cta.disabled = !state.canPay || busy;
     // Backend integration enables the method action; the current storefront only captures the choice.
     cta.hidden = !state.methodAvailability[p.method];
@@ -193,10 +198,10 @@ export function createOrderCompletion(checkout) {
     submitReference.disabled = busy || !reference.value.trim();
     confirmation.hidden = p.status !== 'confirmed'; confirmation.replaceChildren();
     if (p.status === 'confirmed') {
-      confirmation.append(element('h3', '', t(p.amountOption === 'deposit' ? 'Deposit received' : 'Payment received')));
+      confirmation.append(element('h3', '', t('Payment received')));
       const details = element('dl', 'payment-summary');
-      const methodLabel = methods.get(p.method).getAttribute('aria-label') || methods.get(p.method).querySelector('.payment-choice-title').textContent;
-      for (const [label, value] of [['Order reference', order.orderId], ['Amount paid', formatPrice(p.amountPaid, order.currency)], ...(p.amountOption === 'deposit' ? [['Remaining product balance', formatPrice(p.remainingProductBalance, order.currency)]] : []), ['Payment method', methodLabel], ['Shipping fee', t('To be confirmed')]]) {
+      const methodLabel = methods.get(p.method).querySelector('.payment-choice-title').textContent;
+      for (const [label, value] of [['Order reference', order.orderId], ['Amount paid', formatPrice(p.amountPaid, order.currency)], ['Payment method', methodLabel], ['Shipping fee', t('To be confirmed')]]) {
         const row = element('div'); row.append(element('dt', '', t(label)), element('dd', '', value)); details.append(row);
       }
       confirmation.append(details, element('p', '', t('Shipping fee will be confirmed separately')));

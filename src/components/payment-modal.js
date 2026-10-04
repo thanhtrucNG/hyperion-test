@@ -17,7 +17,7 @@ export function createPaymentModal(checkout) {
     if (dialog.open) return;
     opener = trigger; method = state.order.payment.method; dialog.dataset.paymentMethod = method;
     const simulation = state.paymentMode === 'simulation';
-    const titles = { card: 'Card payment', zalopay: 'Pay with ZaloPay', bank_transfer: 'Bank transfer (VietQR)' };
+    const titles = { card: 'Card payment', paypal: 'Pay with PayPal', zalopay: 'Pay with ZaloPay', bank_transfer: 'Bank transfer (VietQR)' };
     const header = element('div', 'payment-modal-header');
     const title = element('h2', '', t(titles[method])); title.id = 'payment-modal-title';
     const dismiss = element('button', 'payment-modal-close', '×'); dismiss.type = 'button'; dismiss.setAttribute('aria-label', t('Close')); dismiss.addEventListener('click', close);
@@ -122,10 +122,19 @@ export function createPaymentModal(checkout) {
         );
       };
       action.remove();
+    } else if (method === 'paypal') {
+      // Redirect method: the customer approves the payment on PayPal's own page (new tab).
+      const brand = element('img', 'paypal-modal-logo'); brand.src = `${'./'}assets/paypal.png`; brand.alt = 'PayPal'; brand.width = 360; brand.height = 91;
+      content.append(brand, element('p', 'paypal-modal-note', t('You will finish the payment securely on PayPal.')));
+      action.addEventListener('click', async () => {
+        await checkout.startPayment(); const url = secureURL(checkout.getState().checkoutURL);
+        if (url) { gatewayWindow = window.open(url, '_blank'); if (gatewayWindow) gatewayWindow.opener = null;
+          clearInterval(gatewayTimer); gatewayTimer = setInterval(() => { if (gatewayWindow?.closed) { clearInterval(gatewayTimer); update(checkout.getState()); } }, 500); }
+      });
     } else if (method === 'zalopay') {
       const steps = element('ol', 'zalopay-steps'); for (const text of ['Open ZaloPay','Open QR scanner','Scan and confirm']) steps.append(element('li','',t(text))); content.append(steps);
       const gateway = element('div', 'simulation-gateway'); gateway.hidden = true;
-      const gatewayBrand = element('img', 'zalopay-gateway-logo'); gatewayBrand.src = `${'./'}assets/zalopay.png`; gatewayBrand.alt = 'ZaloPay';
+      const gatewayBrand = element('img', 'zalopay-gateway-logo'); gatewayBrand.src = `${'./'}assets/Zalopay-logo.png`; gatewayBrand.alt = 'ZaloPay';
       const back = element('button','button',t('Return to checkout')); back.type = 'button'; gateway.append(gatewayBrand, back); content.append(gateway);
       back.addEventListener('click', () => { gateway.hidden = true; action.hidden = false; update(checkout.getState()); action.focus(); });
       action.addEventListener('click', async () => {
@@ -141,11 +150,11 @@ export function createPaymentModal(checkout) {
     }
     update = current => {
       const p = current.order.payment, pending = simulation ? ['pending','awaiting_confirmation'].includes(current.simulationStatus) : ['pending','awaiting_confirmation'].includes(p.status);
-      dueLabel.textContent = t(p.amountOption === 'deposit' ? 'Deposit due now' : 'Full product payment due now'); dueValue.textContent = formatPrice(p.amountDueNow,current.order.currency);
+      dueLabel.textContent = t('Amount due now'); dueValue.textContent = formatPrice(p.amountDueNow,current.order.currency);
       formError.textContent = current.error ? t(paymentErrorMessage(current.error)) : ''; formError.hidden = !current.error;
       status.textContent = current.busy ? t('Processing…') : p.status === 'confirmed' ? t('Payment confirmed') : method === 'bank_transfer' && pending ? t('Waiting for transfer confirmation') : pending ? t('Waiting for payment confirmation') : '';
-      action.textContent = t(current.busy ? 'Processing…' : method === 'zalopay' ? pending ? 'Reopen payment window' : 'Open payment window' : method === 'bank_transfer' ? 'View bank transfer details' : 'Pay');
-      action.disabled = current.busy || p.status === 'confirmed' || (method !== 'zalopay' && pending);
+      action.textContent = t(current.busy ? 'Processing…' : method === 'zalopay' ? pending ? 'Reopen payment window' : 'Open payment window' : method === 'paypal' ? pending && !simulation ? 'Reopen payment window' : 'Continue to PayPal' : method === 'bank_transfer' ? 'View bank transfer details' : 'Pay');
+      action.disabled = current.busy || p.status === 'confirmed' || (method !== 'zalopay' && !(method === 'paypal' && !simulation) && pending);
       for (const field of fields.values()) field.input.readOnly = current.busy || pending || p.status === 'confirmed';
       draw(current);
     };

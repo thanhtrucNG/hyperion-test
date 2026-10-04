@@ -1,8 +1,9 @@
 # Handyman Product Landing Page — Template Specification
 
-**Reference implementation:** HYPERION Marine Safety Signs (this repository)
+**Reference implementation:** HYPERION Safety Signs (this repository)
 **Audience:** AI agents and developers building a sales landing page for another Handyman product
 **Status:** Standard v1 — every value in this document is fixed. Where a range is not given, none is allowed.
+**Last updated:** 2026-10-03 (second pass) — footer (§10, §3.3: right-aligned links with a "Contact:" label, photo positioned on the waves), payment step and methods (§1.1, §12.3), VAT invoice (§12.1), pricing (§12.2), specs catalogue (§12.4). Latest reference for these parts: the HandyPad site (`handypad-new`). Added the same day: Order Summary product list keeps one height (§6.5.1, §9 rule 12).
 
 ---
 
@@ -24,7 +25,7 @@ Every product site has exactly these sections, in this order. Do not add, remove
 |---|---|---|---|
 | 1 | **Header** (sticky) | Light — sky asset | Where to go; language; contact sales |
 | 2 | **Hero** | Dark — hero photo + navy overlay | "Is this the product I need?" → start ordering or get catalogue |
-| 3 | **Feature section** ("Built for…") | Light — misty-sea asset | "Is it good enough / compliant?" |
+| 3 | **Feature section** ("Built for…") — *or its Story variant (§1.2), if the brief chooses it* | Light — misty-sea asset | "Is it good enough / compliant?" |
 | 3b | **Product range** strip — *optional*, only if the brief includes it | Light — plain page colour | "What else is in this range?" (auto-sliding strip, §11.2) |
 | 4 | **Shop section**: Product search + Configurator steps + Order summary | Light — plain page colour | Find the exact item, configure, pay |
 | 5 | **Footer** | Dark — ocean asset | Who is the company; how to reach them |
@@ -35,7 +36,7 @@ Every product site has exactly these sections, in this order. Do not add, remove
 
 **Header**
 - Left: Handyman logo (`assets/handyman-logo.png`, links to `./`).
-- Right, in order: nav links `PRODUCT LOOKUP` (→ `#product-query`), `ORDER` (→ `#find-your-sign`) — both glide per §11.1, `CATALOGUE` (downloads the product PDF) · language switch `EN | VI` · `CONTACT SALES` button — opens a small panel with three direct contact options, each with its app icon: **Call us** (tel:), **WhatsApp** (wa.me), **Zalo** (the company's Zalo OA, `corporate.zalo_url`). No contact form. Desktop: dropdown under the button (300px wide). Below 1024px: the options open inline under the menu's `CONTACT SALES` button. Closes on outside click, Escape (focus returns to the button) and after an option is picked. Component: `src/components/contact-options.js`; icons: `assets/icons/{phone,whatsapp,zalo}.png` (shared, 96×96 transparent PNG, shown at 40px).
+- Right, in order: nav links `PRODUCT LOOKUP` (→ `#product-query`), `ORDER` (→ `#find-your-sign`) — both glide per §11.1, `CATALOGUE` (downloads the product PDF) · language switch `EN | VI` · `CONTACT SALES` button — opens a small panel with three direct contact options, each with its app icon: **Call us** (tel:), **WhatsApp** (wa.me), **Zalo** (Zalo on the sales phone number, `corporate.zalo_href` = `https://zalo.me/84347099905`). No contact form. Desktop: dropdown under the button (300px wide). Below 1024px: the options open inline under the menu's `CONTACT SALES` button. Closes on outside click, Escape (focus returns to the button) and after an option is picked. Component: `src/components/contact-options.js`; icons: `assets/icons/{phone,whatsapp,zalo}.png` (shared, 96×96 transparent PNG, shown at 40px).
 - Below 1024px: nav links + Contact Sales collapse into a `Menu` button dropdown; language switch stays visible.
 
 **Hero**
@@ -52,14 +53,140 @@ Every product site has exactly these sections, in this order. Do not add, remove
 **Feature section**
 - Image column: one product "hero visual" (cut-out or exploded view) — see §4.
 - Text column: eyebrow → H2 (max 6 words) → intro (max 30 words) → **exactly 4** feature cards in a 2×2 grid (icon + title max 4 words + body max 14 words) → text link `View Catalogue →`.
+- **Story variant** (replaces the whole section above — never both on one page): see §1.2.
 
 **Shop section**
 - Left column: Product search card, then configurator heading `FIND YOUR <PRODUCT> <NOUN>` + `Reset selection`, then numbered steps.
 - Steps: `1 Choose a product category` → product-specific steps from `configurator.json` → `Contact & Shipping` → `Payment`. The last two are always the final two steps.
 - Step 1 categories: 2 per row (1 on phones); only a lone last category spans the full row. Sign and design choices (steps 2–3) sit in a fixed-height scroll box — 420px (400px on phones) for signs, about 2½ rows so the cut-off row shows it scrolls — never "Show more" buttons that lengthen the page. A filter box appears above when there are more than 8 choices; the chosen card stays scrolled into view.
+- **Payment step = payment method rows + one pay button.** Orders are always paid **in full**: there is no deposit and no "choose payment option" (Deposit / Pay in full) group. Each method is one row — radio · square app-style icon · name — with nothing on the right and no description (§12.3). Picking a row shows the single red button, labelled `PAY` for every method; it opens that method's pop-up, which shows "Amount due now" = the full order total. Decided 2026-10-01 (the former US$5 / 130.000 ₫ deposit is dropped for every product) — see §12.2.
 - Right column (desktop/tablet): sticky Order Summary card. Mobile: bottom bar (hidden until the order has ≥1 item) that opens the summary as a sheet.
 
 **Footer** — fixed copy, see §10.
+
+### 1.2 Story section (Shopify-style "why" section) — Feature section variant
+
+**Reference implementation:** HandyPad "Why HandyPad" section — `handypad-new/src/components/why-handypad.js`, `src/styles/feature-section.css` (approved by the business, 2026-09-29). Inspired by the phrase-and-gallery section of shopify.com.
+
+**What it is:** one short paragraph of **3 sentences**, one per product strength, over a gallery strip. Each sentence owns **one set of 3 photos**. Only one set is visible at a time; the sentence of the visible set is lit. Hovering a photo reveals a slogan picture for it.
+
+```
+WHY <PRODUCT>                                                    ← eyebrow (H2, .section-eyebrow)
+Sentence one. Sentence two.                                      ← line 1 (forced break after sentence 2)
+Sentence three.                                                  ← line 2   · lit = navy · others grey · hover = gradient
+[ photo 1 ][   photo 2   ][ photo 3 ]                            ← current set, exactly the page width, no crop
+View specs →                                                     ← text link
+```
+
+#### A. Content (per-product input)
+
+| Item | Rule |
+|---|---|
+| Sentences | **Exactly 3**, EN + VI, each a complete sentence ending with a full stop, **≤ 8 words** (VI ≤ 12). One strength per sentence (e.g. material · visibility · durability). |
+| Line fit | Sentences 1 + 2 MUST fit on one line at 1200px width in **both languages** (measure at 32px / 700: ≤ 1200px). If the VI pair is too long, shorten the VI copy — never shrink the font. |
+| Photos | **Exactly 3 per sentence → 9 tiles.** Real photos from `src/assets/products/<slug>/why/` (§4.1). The same photo may appear in two sets only if the brief lists it twice. |
+| Slogan pictures | One per tile (9), in the order the brief gives. Lettering on white, 4:3 (1440 × 1080), WebP ≤ 300 KB. **Exception to §4.3:** these pictures carry baked-in English lettering and are shown unchanged on the EN and VI pages; the slogan text MUST be repeated in the image's `alt`. |
+| Cut-out photo | A transparent-background product shot is allowed as a tile (flag `cutout: true`); it sits on the soft backdrop `radial-gradient(120% 70% at 50% 50%, #fff 0%, #e6edf3 100%)`. |
+| Photo size | Long side ≥ 1000px, WebP/JPG ≤ 350 KB, `width`/`height` attributes = the file's real pixel size (the layout computes tile shapes from them). |
+| Link | `View specs →` (or `View catalogue →`) under the strip, same style as the Feature section link. |
+
+Data shape (in the component, not JSON):
+
+```js
+const STORY = [
+  { sentence: 'Fireproof canvas for hot works.', tiles: [
+    { photo: 'scaffold-pads.webp', width: 1254, height: 1254, alt: '…', slogan: 'slogan-protection.webp', sloganAlt: '…' },
+    { photo: 'fire-grinding.webp', width: 1536, height: 1024, alt: '…', slogan: 'slogan-safer.webp', sloganAlt: '…' },
+    { photo: 'worker-pad.jpg',     width: 403,  height: 403,  alt: '…', slogan: 'slogan-risks.webp', sloganAlt: '…' },
+  ] },
+  // …2 more sentences; a transparent product shot adds `cutout: true`
+];
+```
+
+Sentences and photo `alt` texts go through `t()` (§8); `sloganAlt` stays English (it describes English lettering).
+
+#### B. Layout (fixed values)
+
+> **Gallery rule (hard — all three at the same time, for every set):**
+> 1. **Same strip height.** All 3 sets use one tile height. A set MUST NOT get its own height, and the strip MUST NOT change height when sets change.
+> 2. **Photos close together.** Gaps between tiles are always **16px** (12px on phones), in every set. Spare width MUST NOT go into the gaps or be left empty; every set runs from the container's left edge to its right edge.
+> 3. **Cropped properly.** A set narrower than the strip fills it by growing each tile by the same amount, so photos trim top/bottom only (≤ 15%). Each trimmed or zoomed photo MUST still show its main subject whole (the pad, its logo, the person's head) — set `position` / `zoom` + `origin` per photo until it does. Transparent cut-outs are never trimmed.
+>
+> If one set would need more than a 15% trim to satisfy 1 + 2, don't break the rule — ask for a different photo for that set (closer to the shapes of the other sets) and list it in the hand-off note.
+
+| Part | Desktop ≥ 1280 | Laptop 1024–1279 | Tablet 768–1023 | Mobile < 768 |
+|---|---|---|---|---|
+| Section padding | 96 / 96 | 96 / 96 | 64 / 64 | 48 / 48 |
+| Background | misty-sea asset (as Feature section) | same | same | same, `background-size: auto 100%` |
+| Paragraph size / line-height / weight | **32px** / 1.3 / 700, letter-spacing −0.02em | **28px** | 28px | **22px** |
+| Paragraph width | full container width (no `max-width`) | same | same | same |
+| Line break before sentence 3 | forced (`<br class="story-break">`) | forced | forced | **removed** (text wraps freely) |
+| Paragraph → strip | 32px | 32px | 32px | 24px |
+| Gap between tiles and between sets | 16px | 16px | 16px | 12px |
+| Tile height | **one height for all sets**: `(container − 32px) ÷ max over sets of Σ(photo width ÷ height)` — the widest set fills the width exactly | same | **260px** fixed, strip scrolls | **240px** fixed, strip scrolls |
+| Tile width | starts at tile height × its photo's own ratio (`aspect-ratio: width / height`); in a set narrower than the strip every tile grows by the **same amount** (`flex: 1 1 auto`) — photos trim a little top/bottom (≤ 15%), never the sides; a `cutout` tile is never trimmed (`object-fit: contain`) | same | same | same |
+| Set width | `min-width: 100cqw` — the next set never peeks in; gaps stay **16px** in every set, so every set starts at the left edge and ends at the right edge | same | same (set may be wider → swipe inside it) | same |
+| Strip → link | 24px | 24px | 24px | 24px |
+
+- Container query: `#<section-id> .container { container-type: inline-size; }`; the strip, sets and tile heights use `cqw`, so everything lines up with the page's left **and right** edge (§6.3). The last tile of every set ends exactly at the container's right edge (check: `right` of last tile = header container `right`).
+- All sets share one tile height, so nothing jumps when sets change. Framing per photo (data fields): `position` (object-position for the top/bottom trim, e.g. `50% 80%` to keep low subjects), `zoom` + `origin` (scale the photo toward its subject, e.g. `1.3` at `75% 50%` to show the right side more closely — HandyPad fire photo), `cutout: true`. Check every trimmed or zoomed photo still shows its main subject whole.
+- Tile: radius 8px, card shadow (§3.4), white background, `overflow: hidden`, `object-fit: cover` (with the tile at the photo's own ratio this shows the whole photo).
+- Slogan layer: absolutely placed over the photo, `object-fit: contain`, padding 6%, white background, opacity 0 → 1 in 300ms.
+- Scrollbar hidden (`scrollbar-width: none` + `::-webkit-scrollbar { display: none }`); `scroll-snap-type: x proximity`, each set `scroll-snap-align: start`; snapping is switched off while dragging or gliding.
+
+#### C. Sentence styling (Shopify look)
+
+| State | Style |
+|---|---|
+| Default | grey `#9fb0bf` |
+| Hover / keyboard focus | red → orange gradient `linear-gradient(90deg, #e63720, #f7931e)` shown through the text (`background-clip: text`; the grey fades to transparent in **300ms**); `box-decoration-break: clone` so a wrapped sentence gets the gradient on each line |
+| Lit (active) | solid navy `#06263d` — stays navy on hover |
+| Focus ring | `3px solid #2871b7`, offset 2px, radius 4px |
+
+Sentences are inline `<span role="button" tabindex="0" aria-controls="<strip id>" aria-pressed>` (not `<button>`, which cannot wrap inside a paragraph); Enter and Space act as click.
+
+#### D. Behaviour
+
+| Trigger | Result |
+|---|---|
+| **Click** a sentence (or Enter / Space) | its sentence lights up at once; after a short pause its set slides in. **Hover never changes the set.** |
+| Autoplay | the current set stays still for **5s**, then the next sentence lights up and its set slides in; after set 3 it slides back to set 1 — forever |
+| Slide | **250ms** pause after the sentence lights up (the next set's images are decoded meanwhile, max 800ms, so the slide never stutters), then the strip scrolls over **1400ms** with ease-in-out sine (`(1 − cos(πp)) / 2`), driven by `requestAnimationFrame` (not the browser's `smooth`); the target sentence stays lit throughout |
+| Mouse drag | click-and-drag scrolls the strip 1:1; the pointer is captured only after **6px**, so plain clicks/hovers are untouched; a drag cancels a running glide |
+| Touch | native swipe |
+| Manual scroll / swipe / drag | the sentence of the nearest set lights up; the 5s autoplay countdown restarts |
+| Hover a photo (mouse, `@media (hover: hover)`) | its slogan picture fades in; leaving fades back. Not while dragging |
+| Tap a photo (touch) | toggles its slogan (only one at a time); a tap outside the strip hides it |
+
+**Autoplay pauses** while: the mouse is over the photos (so slogans can be read) · a drag is in progress · the section is less than 30% on screen (`IntersectionObserver`) · the tab is hidden (`visibilitychange`). It resumes with a fresh 5s when none applies.
+
+**Reduced motion** (`prefers-reduced-motion: reduce`, e.g. Windows "Animation effects" off): **no change** — autoplay keeps running and sets still slide (business decision, 2026-09-29: an instant switch looked broken on PCs with animations off). This differs from §11.1 (320ms glide) and §11.2 A/B (freeze).
+
+Only a click, the autoplay timer or the user's own scroll may move the strip. No other self-moving element may be added to this section.
+
+#### E. Accessibility
+
+- Heading: the eyebrow is the section's H2 (`aria-labelledby`); the strip is `role="group"`, focusable (`tabindex="0"`, arrow keys scroll it), labelled with the eyebrow text.
+- Both images of a tile have `alt` text (photo in the page language, slogan in English), so screen readers get both without hovering.
+- The autoplay pause on hover plus the click/keyboard controls satisfy WCAG 2.2.2 — do not remove them.
+
+#### F. Tests (run in the preview before hand-off)
+
+| # | Check | Expected |
+|---|---|---|
+| 1 | Every tile at 1440 / 1280 / 1100 / 1024 / 800 / 390px | tiles in the widest set match their photo ratio (±0.02); other tiles trim ≤ 15% top/bottom only; the main subject (pad, logo) is whole in every tile — check by screenshot |
+| 2 | ≥ 1100px: every tile of every set | same height; 16px gaps; first tile at the container's left edge, last tile at its right edge (same as header) |
+| 3 | Paragraph line count, EN and VI, at 1440 / 1280 / 1100 | 2 lines: sentences 1–2, then 3 |
+| 4 | Click sentence 3 | sentence 3 navy at once; strip glides (intermediate `scrollLeft` values) to set 3 |
+| 5 | Hover sentence 2 (no click) | set does not change; sentence shows the gradient |
+| 6 | Wait 16s (section on screen, mouse elsewhere) | sets 1 → 2 → 3 → 1 at 5s intervals, sentence changes at each glide start |
+| 7 | Mouse over the photos for 7s | no set change; leaving resumes |
+| 8 | Drag the strip 650px with the mouse | strip moves, no slogan toggles, nearest sentence lights up |
+| 9 | Touch tap a tile, tap again, tap outside | slogan on → off; outside tap hides |
+| 10 | Emulate reduced motion | autoplay continues; sets still slide (sample `scrollLeft`: intermediate values over ~1.4s) |
+| 11 | No horizontal page scroll at 360–1440px; no console errors; all 18 images load | — |
+
+Note: a hidden preview window pauses `requestAnimationFrame`, reports `document.hidden`, never fires `IntersectionObserver` and may report reduced motion — test autoplay in a frame that stubs these, or in a visible browser.
 
 ---
 
@@ -69,7 +196,7 @@ An agent MUST refuse to start until items marked **Required** exist in the proje
 
 | Item | Location | Required | Spec |
 |---|---|---|---|
-| Product name (brand) | brief | Required | e.g. `HYPERION` — uppercase in eyebrow/footer title |
+| Product name (brand) | brief | Required | e.g. `HYPERION` — uppercase in the eyebrow |
 | Product noun (EN/VI) | brief | Required | e.g. "sign / biển báo" — used in CTAs and headings |
 | Hero headline (EN + VI, 2 lines) | brief | Required | ≤ 12 words |
 | Feature section copy (EN + VI) | brief | Required | eyebrow, H2, intro, 4 × (title, body) |
@@ -78,7 +205,7 @@ An agent MUST refuse to start until items marked **Required** exist in the proje
 | Product catalogue PDF | `assets/<slug>-catalogue-en.pdf` (+ `-vi.pdf` if available) | Required | ≤ 5 MB |
 | Product data | `src/data/products.json`, `families.json`, `taxonomy.json`, `configurator.json` | Required | same schema as Hyperion (§12) |
 | Product images | URLs inside `products.json` → `image_url`, or files in `src/assets/products/<slug>/items/` | Required | see §4.2 |
-| Pricing & deposit | `products.json` prices; `src/checkout/config.js` deposit | Required | USD + VND |
+| Pricing | **list prices** in the product data (`products.json` / `src/data/products.js`) — the site shows them 10% off (§12.2); no deposit | Required | USD + VND |
 | Page `<title>` + meta description (EN) | brief | Required | title ≤ 60 chars, description ≤ 155 chars |
 | Favicon | `favicon.png` | Optional | defaults to Handyman favicon |
 
@@ -105,7 +232,7 @@ These live in `src/assets/theme/` (plus the three contact icons in `assets/icons
 **Asset delivery rules**
 - Export every theme background as **WebP, quality 80, ≤ 350 KB** (current PNGs are 1.7–3.5 MB — must be converted). Keep the PNG only as source.
 - Dark backgrounds MUST always have the navy overlay; text MUST NOT sit on the raw photo.
-- The helm-wheel watermark in the summary/footer images sits on the right — never place text or buttons over the right 20% of those images.
+- The helm-wheel watermark in the summary/footer images sits on the right — never place text or buttons over the right 20% of the **Order Summary** image. The footer band is an exception: it shows a lower slice of its photo (the waves, §3.3), where only a faint arc of the wheel remains, and its links run to the right edge (§10).
 - The oil-rig/sea band in the feature background occupies the bottom 25% — keep cards and text above it (section bottom padding handles this, §6.3).
 
 ### 3.2 Colour palette (the only colours allowed)
@@ -136,7 +263,7 @@ Rules: red is for **one** primary action per view plus thin accent lines — nev
 | Section | ≥ 768px | < 768px |
 |---|---|---|
 | Hero | `linear-gradient(90deg, rgba(4,33,53,.86) 0%, rgba(4,33,53,.70) 38%, rgba(4,33,53,.30) 68%, rgba(4,33,53,.08) 100%)` | `linear-gradient(180deg, rgba(4,33,53,.84) 0%, rgba(4,33,53,.74) 100%)` |
-| Footer | `linear-gradient(180deg, rgba(3,35,56,.94) 0%, rgba(3,35,56,.89) 55%, rgba(3,35,56,.76) 100%)` | same |
+| Footer band | `linear-gradient(180deg, rgba(3,35,56,.84) 0%, rgba(3,35,56,.78) 55%, rgba(3,35,56,.70) 100%)` over the photo at `background-size: cover; background-position: 30% 70%` — the band is a thin slice of a 3:1 photo whose middle is dark sky; 70% down puts the wave crests in view (30% across favours the bright crests when the photo is cropped sideways on phones). Do not lighten the wash below 70%: the coral "Contact:" label loses contrast over the brightest crests. | same |
 | Order Summary | `linear-gradient(rgba(4,37,60,.34), rgba(4,37,60,.25))` | same |
 
 ### 3.4 Shape & depth
@@ -172,7 +299,7 @@ Rules: red is for **one** primary action per view plus thin accent lines — nev
 - `object-fit: contain` for product images (never crop a product); `cover` only for backgrounds.
 - Every `<img>` has `width`/`height` attributes, `loading="lazy"` (except hero/above-the-fold: `eager`), `decoding="async"`.
 - `alt` text: product name + variant in the current language (e.g. "Lifebuoy sign, 150 × 150 mm"). Decorative images: `alt=""`.
-- Never put text inside images (no baked-in headlines) — all text is HTML so it can be translated.
+- Never put text inside images (no baked-in headlines) — all text is HTML so it can be translated. *Only exception:* the slogan pictures of the Story section (§1.2 A), with the slogan repeated in `alt`.
 
 ---
 
@@ -195,17 +322,17 @@ Rules: red is for **one** primary action per view plus thin accent lines — nev
 | Token | Size | Line height | Weight | Used for |
 |---|---|---|---|---|
 | `--fs-1` | **40px** | 1.2 | 700 | Hero H1 (desktop/tablet) |
-| `--fs-2` | **28px** | 1.2 | 700 | Section H2, hero H1 on mobile, Order Summary total, footer product name (desktop/tablet) |
-| `--fs-3` | **20px** | 1.2 | 700 | Card/step titles, footer "by DLV CORPORATION" and footer product name on mobile, prices, section H2 on mobile |
-| `--fs-4` | **16px** | 1.5 | 400 / 600 | Body, intro, inputs, option titles, step titles on mobile, footer tax code and contact lines |
-| `--fs-5` | **14px** | 1.5 | 400 / 600 / 700 | Labels, hints, meta (IMPA/size), eyebrows, footer column heading and copyright, captions, errors, **all CTA button and chip text (uppercase, 700)** |
+| `--fs-2` | **28px** | 1.2 | 700 | Section H2, hero H1 on mobile, Order Summary total |
+| `--fs-3` | **20px** | 1.2 | 700 | Card/step titles, prices, section H2 on mobile |
+| `--fs-4` | **16px** | 1.5 | 400 / 600 | Body, intro, inputs, option titles, step titles on mobile |
+| `--fs-5` | **14px** | 1.5 | 400 / 600 / 700 | Labels, hints, meta (IMPA/size), eyebrows, captions, errors, **all CTA button and chip text (uppercase, 700)** |
 
 Rules:
-- No other size may appear anywhere (including modals, toasts, badges). **Minimum size is 14px** — no 10/11/12/13px text.
+- No other size may appear anywhere (including modals, toasts, badges). **Minimum size is 14px** — no 10/11/12/13px text. *Only exceptions:* the Story section paragraph (§1.2 B) — 32 / 28 / 22px, letter-spacing −0.02em — and the footer links (§10) — 18px / 600.
 - Mobile (< 768px) changes only two things: H1 `40 → 28`, H2 `28 → 20`. Every other element keeps its size.
 - Weights: 400 (body), 600 (labels, option titles), 700 (headings, prices, CTA buttons). No 300/500/800/900.
 - Letter-spacing: `0` everywhere, except uppercase eyebrows/column headings `0.12em` and CTA buttons `0.04em`.
-- Uppercase is allowed only for: **CTA buttons (§5.3)**, eyebrows, footer column headings, header nav links, configurator heading. Never uppercase a sentence, a paragraph or body text.
+- Uppercase is allowed only for: **CTA buttons (§5.3)**, eyebrows, header nav links, configurator heading. Never uppercase a sentence, a paragraph or body text.
 - Prices, quantities, codes: `font-variant-numeric: tabular-nums`.
 - **Hyperion deviation:** the current code uses ~40 distinct font sizes (8px–80px plus many `clamp()` values). The template must be normalised to the 5 tokens above.
 
@@ -213,7 +340,7 @@ Rules:
 
 Every call-to-action button shows its text **in capitals**, in both languages.
 
-- **Counts as a CTA:** every element styled as a button that performs an action — primary (red) and secondary (outline/navy) buttons, header `CONTACT SALES`, hero buttons, `FIND PRODUCTS`, `ADD` / `ADD TO ORDER`, `SHOW MORE RESULTS`, Order Summary `ORDER` / `PAY NOW` / `VIEW ORDER`, payment buttons (`PAY BY CARD`, `OPEN SECURE CHECKOUT`, `CHECK PAYMENT STATUS`, `SUBMIT TRANSFER REFERENCE`), modal and sheet `CLOSE`, the mobile-menu `MENU` button, footer `WHATSAPP` / `ZALO` chips, `RESET SELECTION`.
+- **Counts as a CTA:** every element styled as a button that performs an action — primary (red) and secondary (outline/navy) buttons, header `CONTACT SALES`, hero buttons, `FIND PRODUCTS`, `ADD` / `ADD TO ORDER`, `SHOW MORE RESULTS`, Order Summary `ORDER` / `PAY NOW` / `VIEW ORDER`, payment buttons (`PAY` (the payment step's one button, §12.3), `OPEN SECURE CHECKOUT`, `CHECK PAYMENT STATUS`, `SUBMIT TRANSFER REFERENCE`), modal and sheet `CLOSE`, the mobile-menu `MENU` button, footer `WHATSAPP` / `ZALO` chips, `RESET SELECTION`.
 - **Not a CTA** (keep normal case): selectable option cards (category, sign, size, edition, payment option/method), form labels, text links such as `View Catalogue →`, the `EN | VI` switch, step titles.
 - **How:** store the label in normal sentence case in `locale.js` (e.g. `'Find your sign': 'Tìm biển báo'`) and render capitals with CSS `text-transform: uppercase` on the button class. Never type capitals into the translation file for a CTA — this keeps screen-reader output natural and lets one string serve other contexts.
 - Style: `--fs-5` 14px, weight 700, letter-spacing `0.04em`, `white-space: nowrap`. Max 3 words (Vietnamese max 4 words). Vietnamese capitals keep all diacritics (`THANH TOÁN NGAY`, `TẢI CATALOGUE`) — check that the font draws stacked marks (Ể, Ặ) without clipping at the 48px button height.
@@ -263,7 +390,7 @@ Media queries use only these three boundaries, written either mobile-first (`min
 | Section padding (top / bottom) | **48 / 48** | **64 / 64** | **96 / 96** | **96 / 96** |
 | Hero padding (top / bottom) | **40 / 48** | **48 / 64** | **64 / 64** | **64 / 64** |
 | Hero min-height | none | **360px** | **400px** | **400px** |
-| Footer padding (top / bottom) | **32 / 16** | **40 / 16** | **40 / 16** | **40 / 16** |
+| Footer band padding (top / bottom) | **32 / 32** | **36 / 36** | **36 / 36** | **36 / 36** |
 
 Every section uses the same `.container` so all content aligns to the same left/right edges as the header logo. Full-bleed backgrounds, contained content — always.
 
@@ -285,7 +412,7 @@ Every section uses the same `.container` so all content aligns to the same left/
 | Input | height **48px**, padding 0 12px |
 | Minimum touch target | **44 × 44px** |
 | Hero H1 → buttons | 32px (mobile 24px) |
-| Footer column gap | 40px + 1px divider + 40px (2 columns, ≥ 1280px); stacked: 24px with a 1px top divider and 20px above Contact |
+| Footer links | one row, **right-aligned** (`justify-content: flex-end`); 40px between links (20px on tablets); "Contact:" label 24px before the first link; icon ↔ text 8px; phones: centred wrapped rows, 16px between rows, 24px between links |
 
 ### 6.5 Shop section layout
 
@@ -295,6 +422,24 @@ Every section uses the same `.container` so all content aligns to the same left/
 | Column gap | — | 16px | 24px | 24px |
 | Summary | bottom bar (76px) + sheet | sticky, top = header + 16px | sticky | sticky |
 | Search card overlap onto previous section | −24px | −36px | −36px | −36px |
+
+### 6.5.1 Order Summary — the product list keeps one height (hard rule, 2026-10-03)
+
+The Order Summary card has three parts: header (title + counts) · product list (scrolls) · totals area. The totals area changes height: "Estimated total" alone → "Amount due now" + `Merchandise subtotal` + `Shipping fee` once Payment unlocks → plus the `ORDER` / `PAY NOW` button when its target is off screen. It also changes back, e.g. when the customer ticks "I need a VAT invoice" and Payment locks again.
+
+> **Rule:** the product list MUST keep exactly the same height in every totals state. The card grows or shrinks at its **bottom edge** only. The list never gets taller or shorter because of what the totals area shows.
+
+| Part | Value |
+|---|---|
+| Card (`.summary-shell`) | sticky, `top = header + 16px`, **no `max-height`** (desktop and tablet) |
+| Product list (`.summary-content`) | `max-height: max(200px, calc(100dvh - var(--header-height) - 32px - var(--summary-chrome)))`, `overflow-y: auto` — the cap is on the list, not on the card |
+| `--summary-chrome` | summary header + the **tallest** totals area (due amount + two rows + button, in the longer language). Hyperion: **320px**; **350px** below 1024px (narrower column, rows wrap). Re-measure when the totals area or its labels change. |
+| Result | the tallest card still fits between the page header and the bottom of the screen; shorter totals states leave free space under the card |
+| Phone sheet | unchanged: the sheet is capped as a whole (`max-height: calc(100dvh - 24px)`) and its list takes the remaining height |
+
+Wrong: `max-height` on the card with a flexible list inside — the list then shrinks whenever the totals area grows.
+
+Tests (order with ≥ 4 products, Contact & Shipping complete, EN and VI, at 768 / 1024 / 1280 / 1440px): tick and untick the VAT checkbox → list height identical in both states (measure `.summary-content`), card height differs only by the totals rows · with the `ORDER` / `PAY NOW` button shown, the card's bottom edge is still on screen · no page-level horizontal scroll.
 
 ### 6.6 Order steps — one style for every step
 
@@ -370,7 +515,6 @@ Translate the **meaning in context**, not the words. Before writing a Vietnamese
 | Country | Quốc gia | |
 | Payment | Thanh toán | |
 | Pay now | THANH TOÁN NGAY | |
-| Deposit | Đặt cọc | |
 | Shipping fee | Phí vận chuyển | |
 | Edition | Phiên bản | |
 | SKU | mã sản phẩm | |
@@ -391,7 +535,7 @@ Every visible string MUST be pulled in **both languages** and reviewed side by s
 - Each configurator step open, complete and locked (incl. unlock hints)
 - Order Summary empty → 1 item → payment option chosen; mobile bottom bar and sheet
 - Contact & Shipping with every validation error shown
-- Payment step · card pop-up · bank transfer/VietQR pop-up · ZaloPay pop-up · pending / confirmed / failed states
+- Payment step · card pop-up · bank transfer/VietQR pop-up · PayPal pop-up (EN only) · ZaloPay pop-up · pending / confirmed / failed states
 - Contact Sales pop-up (empty, errors, sent) · header mobile menu · footer
 
 **Output:** a table `Area | Key | EN | VI | Issue` saved as `docs/translation-review-<slug>.md`. Flag: missing VI, EN left in VI view, inconsistent term (vs. glossary), wrong meaning, VI longer than the space, wrong number/currency format.
@@ -413,29 +557,42 @@ The goal of every area: the user sees **only what they need to make the next dec
 9. **Copy limits:** hero H1 ≤ 12 words; H2 ≤ 6 words; intro ≤ 30 words; feature card body ≤ 14 words; button label ≤ 3 words.
 10. **No decorative text** that can't be read (faint watermarks, tiny uppercase slogans). If it's on the page, it must pass contrast.
 11. Numbers users compare (price, size, quantity) are always visible without hovering or expanding.
+12. **A change in one area MUST NOT resize another area.** When a part of a card shows, hides or changes its text (totals rows, a button, an error, an extra field), only that part and the card's outer edge may move. Lists, images and controls the user is looking at or scrolling keep their size and position. Reference case: the Order Summary product list (§6.5.1).
 
 ---
 
-## 10. Footer (fixed copy — do not edit per product)
+## 10. Footer (fixed — the same on every product site and on the specs catalogue)
 
-Layout (same as the Handypad footer): **2 columns** — brand on the left (`minmax(0, 1fr)`), Contact on the right, only as wide as its longest line (`max-content`), with 40px either side of a 1px divider (`rgba(255,255,255,.12)`); columns stretch to equal height so the divider runs full height. Below 1280px: one column, Contact under a 1px top divider. No tagline, no "About us" column.
+One navy ocean band with **one row of five contact links**, grouped at the right edge behind a "Contact:" label. The same five contacts as the specs catalogue (§12.4). No tagline, no brand line, no tax code, no address, no phone number as text, no copyright line. Decided 2026-10-03 on HandyPad (replaces the earlier two-column brand + Contact footer).
 
 ```
-<PRODUCT> by DLV CORPORATION              ← one line: product name --fs-2 28px/700 white + "by DLV CORPORATION" --fs-3 20px/600 --red (phone: 20 / 16px)
-Tax code: 0307940363                      ← --fs-4 16px, 16px below the brand line; label muted, number 600 (VI: "Mã số thuế: 0307940363")
-
-│ CONTACT                                  ← right column, heading 12px uppercase --coral (VI: LIÊN HỆ)
-│ [pin]   29 Nguyen Van Quy Street, Tan Thuan Ward, Ho Chi Minh City, Vietnam   → Google Maps (new tab)
-│ [phone] (+84) 347 099 905   [WhatsApp] [Zalo]                                → tel: / wa.me/84347099905 / zalo.me/2640689488672783975 (Zalo OA)
-│ [mail]  info@dlvcorp.com                                                      → mailto:   (contact text --fs-4 16px, icons 18px --coral)
-
-© <current year> DLV Corporation. All rights reserved.       ← centred under a divider; VI: "Bảo lưu mọi quyền."
+───────────────────────────────── 3px red line ─────────────────────────────────
+                         Contact:  [mail] info@dlvcorp.com    [globe] Handyman.vn    [f] Facebook    [wa] WhatsApp    [zalo] Zalo
 ```
 
-- Source of truth: `src/data/corporate.js` (`legal_en` for "DLV CORPORATION", `tax_code`, addresses, phone, email, `zalo_url`). Agents MUST NOT retype these strings elsewhere.
-- Brand line, address, phone, email: **one line each from 768px up** (`white-space: nowrap`; the layout guarantees the room: 2 columns ≥ 1280px, stacked below). On phones the address breaks only between street / ward / city, country — three whole lines.
-- VI page shows the Vietnamese address (`corporate.address_vi`); the map link always searches the English address.
-- The year is computed at runtime (`new Date().getFullYear()`), never hard-coded.
+| Link | Label | Target |
+|---|---|---|
+| Email | `info@dlvcorp.com` | `mailto:info@dlvcorp.com` |
+| Website | `Handyman.vn` | `https://handyman.vn` (new tab) |
+| Facebook | `Facebook` | `https://www.facebook.com/handymanbydlvcorp` (new tab) |
+| WhatsApp | `WhatsApp` | `https://wa.me/84347099905` (new tab) |
+| Zalo | `Zalo` — icon + the word only, never the phone number | `https://zalo.me/84347099905` (Zalo on the sales phone number, new tab) |
+
+| Part | Value |
+|---|---|
+| Band | ocean asset positioned on the waves, under the navy wash (§3.3 Footer band), `border-top: 3px solid --red`; the band is the whole footer |
+| Row | inside the page `.container`, `justify-content: flex-end`: the group ends at the content's right edge (same edge as the header's CONTACT SALES), 40px between links, padding 36px top and bottom |
+| Label | `Contact:` / `Liên hệ:` — sentence case with the colon, **18px / 700**, `--coral`, `white-space: nowrap`, directly before the first link (24px gap). Shown from **1024px** up only; hidden below (the links fill the row). `aria-hidden` — the `<nav>` already carries the label. |
+| Link text | **18px / 600**, white, `white-space: nowrap`; underline on hover; focus ring 2px white, offset 4px |
+| Icons | **24px**, `--coral` (`#ff8a73`); mail / globe / Facebook / WhatsApp are the catalogue's filled SVG icons, Zalo is its app icon (`assets/contact/zalo.png`, radius 5px) |
+| Height | ≈ 100px on one row |
+| Tablet (768–1023) | still one row, right-aligned (gap 20px); no "Contact:" label |
+| Phone (< 768) | links wrap onto 2–3 **centred** rows (a right-aligned wrap looks ragged), 32px padding, each link ≥ 32px tall; no label |
+
+- Source of truth: `src/data/corporate.js` — `email`, `website` / `website_href`, `facebook_href`, `phone_href` (WhatsApp number), `zalo_href` / `zalo_label`. Agents MUST NOT retype these values elsewhere; the header's CONTACT SALES menu reads the same `zalo_href`.
+- The footer `<nav>` carries `id="contact"` and `aria-label` = "Contact" / "Liên hệ".
+- The labels are the same in EN and VI (brand names and an email address); nothing in the footer needs translating.
+- Changing a contact (email, Zalo, …) = change `corporate.js` **and** the catalogue footer, then rebuild both catalogue PDFs (§12.4).
 
 ---
 
@@ -449,10 +606,9 @@ Tax code: 0307940363                      ← --fs-4 16px, 16px below the brand 
 | Category options | 1 column | 2 columns | 2 columns |
 | Sign/design grid | 2 columns | 3 columns | 4 columns |
 | Shipping form | 1 column | 2 columns | 2 columns |
-| Payment amount (full / deposit) | 1 column | 2 columns | 2 columns |
-| Payment methods | 1 column | 1 column | 1 column |
+| Payment methods | one row per method (62px; icon 44px) | one row per method (66px; icon 48px) | one row per method (66px; icon 48px) |
 | Order summary | Bottom bar → sheet | Sticky 280px | Sticky 320 / 360px |
-| Footer | 1 column (address on 3 whole lines) | 1 column | 1024–1279: 1 column · ≥ 1280: brand left, Contact right (2 columns) |
+| Footer | links wrap to 2–3 centred rows | one row, right-aligned | "Contact:" + one row of links, right-aligned |
 
 - No horizontal scrolling at any width ≥ 360px (`document.documentElement.scrollWidth === innerWidth`).
 - Sticky elements must never cover a focused input (`scroll-padding-top: header + 20px`, `scroll-padding-bottom: 100px` on mobile).
@@ -493,7 +649,7 @@ In-list moves (e.g. "Show more results" revealing the next card inside a scroll 
 **Other motion**
 - After arriving, move keyboard focus to the destination heading with `focus({ preventScroll: true })` so screen readers follow without a second jump.
 - Update the URL hash with `history.replaceState` (no extra history entries).
-- Hover/state transitions: `150ms ease` on background and border colour only. No parallax, no scroll-triggered animations. The only self-moving elements allowed are the two in §11.2.
+- Hover/state transitions: `150ms ease` on background and border colour only. No parallax, no scroll-triggered animations. The only self-moving elements allowed are the two in §11.2 and the Story section autoplay (§1.2 D, which also sets its own 300ms colour/opacity fades).
 - With `prefers-reduced-motion: reduce`, remove all transitions except the shortened section glide.
 
 ### 11.2 Self-moving elements (auto-slide & rotating image)
@@ -539,7 +695,7 @@ The shopping flow is data-driven. A new product changes data, not code.
 | `taxonomy.json` | Step 1 categories | `groups[]`: `id`, `label_en/vi`, `order` |
 | `configurator.json` | Which steps each category uses, in order | `branches.<category-id>`: ordered list of fields (e.g. `config_concept`, `config_direction`, `dimensions_display`, `product_family_id`, `edition`) + `concepts`, `directions`, `families` mappings |
 | `corporate.js` | Footer/company facts | fixed (§10) |
-| `checkout/config.js` | Deposit and enabled payment methods | `depositUSD`, `depositVND`, `methods` — never put secrets here |
+| `checkout/config.js` | Payment mode and enabled payment methods | `paymentMode`, `apiBase`, `methods` (`card`, `paypal`, `zalopay`, `bank_transfer`) — no deposit settings; never put secrets here |
 
 Rules: IDs are stable strings; every `_en` field has a `_vi` twin; images follow §4; a step whose field has only one possible value for the current selection is auto-selected and shown as complete.
 
@@ -612,6 +768,97 @@ Country MUST sit directly before City / Province (same row on desktop/tablet: Co
 | 9 | Switch EN ↔ VI with a province selected | same province, label in the new language |
 | 10 | Mobile 390px | both dropdowns open fully on screen, options ≥ 44px tall |
 
+**Optional VAT invoice (checkbox under Shipping address)** — added 2026-10-03.
+
+| Part | Rule |
+|---|---|
+| Control | One checkbox row, full width, directly under Shipping address: `I need a VAT invoice` / `Tôi cần xuất hóa đơn VAT`, with the hint `Uses the details above. Company and tax code are required.` (always visible). Unticked by default. |
+| Unticked | Company stays optional; no Tax code field. |
+| Ticked | **Company becomes required** (label gains ` *`; if it is empty, its "Required field" error shows at once) and a required **Tax code** / `Mã số thuế` field appears under the checkbox. Payment stays locked until both are valid. |
+| Tax code check | Vietnam (`countryCode === 'VN'`): 10 digits, or 13 for a branch (`0307940363`, `0307940363-001`) → otherwise `Enter a valid tax code (10 or 13 digits)`. Other countries: 4–20 letters / digits (formats vary). |
+| Invoice details | The invoice uses the contact and address fields already entered — there is no separate invoice address. |
+| Unticking | Removes both requirements and hides the field; the typed tax code is kept in the form (not sent) in case the box is ticked again. |
+| Stored / sent | The draft saves `wantsInvoice` and `customer.taxCode` (survives reload). The order payload carries `vatInvoice: true/false`; `customer.taxCode` is sent only when `vatInvoice` is true. |
+
+Tests: tick with empty Company → Payment locks, Company flagged · fill Company only → still locked · tax code `12345` (VN) → error · `0307940363` → Payment unlocks · reload → tick and code kept · untick with empty Company → Payment unlocked.
+
+### 12.2 Pricing — 10% off every product, paid in full (business decision 2026-10-01)
+
+**Rule:** every price a customer sees is the **list price − 10%**, for every product and SKU. Orders are paid **in full**; there is no deposit.
+
+| Part | Rule |
+|---|---|
+| Where list prices live | The product data keeps the **original list prices** (V70 / Odoo list) unchanged — never overwrite them with discounted numbers. |
+| One factor, one place | A single constant `PRICE_FACTOR = 0.9` is applied where the price data is loaded (HandyPad: `src/data/products.js`; JSON-driven sites: the catalogue loader before anything reads prices). Ending or changing the discount = changing that one number. |
+| Apply per price part | Products built from parts (base + add-ons, e.g. HandyPad reflective / fireproof) discount **each part**, so the "+add-on" amounts shown in the order steps add up exactly to the SKU price. |
+| Rounding | VND to the whole đồng; USD to the cent, in **integer cents** with half rounding up (`Math.round(cents × 90 / 100) / 100`, e.g. US$3.85 → US$3.47). A USD SKU may therefore end 1–2¢ above an exact 10% — accepted. |
+| Display | Show the discounted price **directly**, as the only price: no struck-through list price, no "−10%" badge (unless a brief asks for a sale look). Same price on Product Range cards, "from" prices, option cards, add-on prices, unit price, order rows, Order Summary, pay pop-up and confirmation. |
+| Same price everywhere | The specs catalogue PDF (EN + VI) and the Odoo product export MUST read the same price data as the site (HandyPad: `handypad-catalogue/render.mjs` and `odoo-export.mjs` import `src/data/products.js`). After any price change, rebuild both PDFs and the Odoo export. |
+| Payment amount | Always the full order total: `payment.amountOption = 'full'` (kept in the order payload so payment backends get the same shape), `amountDueNow = merchandiseSubtotal`. No `depositUSD` / `depositVND`, no "Remaining balance" row, no deposit wording in any language. |
+| Order Summary | Shows "Estimated total" until Payment unlocks, then "Amount due now" (= full total) + Merchandise subtotal + "Shipping fee: To be confirmed". |
+| Order Summary — stable product list | The product list keeps one height while the totals area changes; the card grows at its bottom edge only. Full rule, values and tests: §6.5.1. |
+
+**Tests (before hand-off)**
+
+| # | Check | Expected |
+|---|---|---|
+| 1 | Every SKU, EN and VI | shown price = parts × 0.9 rounded as above (VND exactly −10%) |
+| 2 | Add-on prices in the order steps | each = add-on list price × 0.9; base + add-ons = SKU price shown |
+| 3 | Catalogue PDFs + Odoo export | same prices as the site, SKU by SKU |
+| 4 | Full checkout (item → Contact & Shipping → method) | no amount/deposit choice; pay button enabled after picking a method; pop-up "Amount due now" = order total |
+| 5 | `grep -i deposit` / "đặt cọc" in `src/` | no visible deposit text, no deposit config |
+
+### 12.3 Payment methods (rows, PayPal, pop-ups) — updated 2026-10-03
+
+**Methods, in this order:**
+
+| # | Value | Row name (EN / VI) | Icon (`assets/pay/`) | Offered when |
+|---|---|---|---|---|
+| 1 | `card` | Card (Visa, Mastercard) / Thẻ quốc tế (Visa, Mastercard) | `card.png` (Visa) | always |
+| 2 | `paypal` | PayPal | `paypal.png` | **USD (English) page only** — PayPal cannot charge VND, so the row is left out on the VND page |
+| 3 | `zalopay` | ZaloPay | `zalopay.png` | always |
+| 4 | `bank_transfer` | Bank Transfer / Chuyển khoản (the row name has no "/ VietQR"; the VietQR icon and the pop-up title "Bank transfer (VietQR)" carry it) | `vietqr.png` | always |
+
+**Row layout (fixed):** radio circle (20px) · square app-style icon · method name (16px / 700). Nothing on the right, no description line, no generic card / wallet / bank icons.
+
+| Part | Desktop / tablet | Phone |
+|---|---|---|
+| Row height | 66px (`min-height: 64px`, padding 8px 16px) | 62px (padding 8px 12px) |
+| Icon | 48 × 48px, radius 11px | 44 × 44px, radius 10px |
+| Icon files | 144 × 144 PNG, ≤ 15 KB each; a wordmark on a transparent square (VietQR) gets a white tile with a 1px `#d8e1e7` hairline |
+| Gap between rows | 10px |
+| Selected row | red border + `--red-soft` background, radio filled red |
+
+**Pay button:** one red full-width button under the rows, hidden until a method is chosen. Label **`PAY` / `THANH TOÁN`** for every method (never "Pay by card", never the amount). It opens the method's pop-up:
+
+| Method | Pop-up |
+|---|---|
+| Card | card form (number, expiry, CVC) with the wide Visa + Mastercard logos; button `PAY` |
+| PayPal | PayPal wordmark on a **white plate** (the pop-up is dark navy and the logo's dark-blue lettering is unreadable on it), the line `You will finish the payment securely on PayPal.`, button `CONTINUE TO PAYPAL`; live mode opens the PayPal approval link in a new tab |
+| ZaloPay | three steps (open ZaloPay, open QR scanner, scan and confirm); button `OPEN PAYMENT WINDOW` |
+| Bank Transfer | VietQR image + bank details with copy buttons |
+
+Every pop-up shows `Amount due now` = the full order total (§12.2).
+
+Rules:
+- Method availability = offered for the currency **and** (simulation mode **or** the backend reports the method enabled). A saved method that is not available on this page is dropped.
+- Logos supplied with a baked-in checkerboard or black backdrop MUST be cleaned to real transparency before use.
+- Adding a method = one entry in `PAYMENT_METHODS` + `METHODS` (row), a pop-up branch, an icon in `assets/pay/`, the `methods` flag in `config.js`, and the service capability list.
+
+Tests: EN page shows 4 rows, VI page 3 (no PayPal) · every icon loads · selecting a row shows `PAY` · `PAY` opens the right pop-up with the order total · no horizontal scroll at 390 / 1440px.
+
+### 12.4 Specs catalogue (PDF) — one source with the site
+
+Each product has a one-page A4 specs catalogue in EN and VI, built by headless Chrome from an HTML page that **imports the site's own product data** (HandyPad: `handypad-catalogue/catalogue.html` + `render.mjs` → `handypad-new/assets/<Product>-by-Handyman-specs-{en,vi}.pdf`).
+
+| Rule | Detail |
+|---|---|
+| One source | Prices, sizes and add-on prices come from the site's product data — never typed into the catalogue. After any price change, rebuild both PDFs and the Odoo export (§12.2). |
+| One page | Each PDF MUST be exactly **one A4 page**. The sheet is a fixed 297mm column that clips overflow, so new content can silently push the footer off the page — after every content change measure that the footer band ends at 297mm, and count the PDF's pages. If it doesn't fit, tighten spacing or shorten the price-tile pictures; never drop the footer. |
+| Footer | The same five contacts as the site footer (§10), in one row; no tagline above it. (On the A4 page the five are spread edge to edge; the right-aligned group with the "Contact:" label is the website layout.) |
+| Technical specs | Product-specific blocks (HandyPad: Specifications, Tensile Strength, Foam, Delivery, Fireproof Upgrade, Sizes) use the icon + title + short bullet list pattern; values are written exactly as the business supplies them. Every block has a Vietnamese twin. |
+| Locked files | A PDF open in a viewer cannot be overwritten (`EBUSY`). Build into `build/`, verify, then copy into `assets/`; if the copy fails, ask the user to close the file. |
+
 ---
 
 ## 13. Accessibility (non-negotiable)
@@ -641,8 +888,10 @@ Country MUST sit directly before City / Province (same row on desktop/tablet: Co
 - [ ] Only Be Vietnam Pro (and at most one approved second font) is loaded.
 - [ ] Only the 3 breakpoints are used (no extra footer breakpoint).
 - [ ] Every UI string has a Vietnamese translation; `?lang=vi` renders with VND prices.
-- [ ] Footer copy is byte-identical to §10; year is dynamic.
-- [ ] Footer matches the Handypad layout (§10): ≥ 1280px brand + tax code left, Contact right behind a 1px divider; below 1280px stacked; no tagline, no About us column; "<PRODUCT> by DLV CORPORATION" on one line from 768px.
+- [ ] Footer matches §10: one navy band showing the waves (§3.3), five contact links (email, Handyman.vn, Facebook, WhatsApp, Zalo) at 18px with 24px icons, right-aligned on one row from 768px with the last link on the content's right edge, "Contact:" / "Liên hệ:" before the first link from 1024px, wrapped and centred on phones; no tagline, brand line, tax code, address or copyright; every link target equals `corporate.js`.
+- [ ] Payment (§12.3): rows are radio · square icon · name only; PayPal on the USD page only; one `PAY` button; every pop-up shows the full order total.
+- [ ] VAT invoice (§12.1): unticked by default; ticking makes Company and Tax code required and locks Payment until valid; all six tests pass in EN and VI.
+- [ ] Specs catalogue (§12.4): EN and VI PDFs rebuilt after any data, contact or copy change; each is exactly one A4 page with the footer fully visible; prices equal the site's.
 - [ ] No orphan words in headings at 1440 / 1024 / 390px; units, phones, codes never split.
 - [ ] One item = one line (§5.4 rule 3): measure the line count of the address, company name, phone, email and every button at 1440, 1280, 1279, 1100, 1024, 1023, 768, 767, 390 and 360px in EN and VI — 1 line everywhere from 768px up; on phones the address breaks only between its parts. Also proofread every visible string for typos and stray breaks before hand-off.
 - [ ] Breakpoints: no `max-width` without `.98`; test once at a fractional width (browser zoom or 150 % display scaling) that the layout changes exactly at 768 / 1024 / 1280.
@@ -657,6 +906,9 @@ Country MUST sit directly before City / Province (same row on desktop/tablet: Co
 - [ ] Bilingual review table `docs/translation-review-<slug>.md` delivered, covering landing, order steps, Order Summary, toasts, errors and every pop-up (§8.2); glossary terms used consistently (§8.1); no inline `language === 'vi'` strings left.
 - [ ] If present — Product range strip: slides at 24px/s; stops only on hover, drag, keyboard focus; freezes with reduced motion (§11.2A). Hero rotating image: 5s / 600ms fade; pauses on hover/focus; frozen on first image with reduced motion, manual switch instant (§11.2B). Both tested with Windows "Animation effects" off.
 - [ ] Checkout: Country directly before City / Province; all 10 tests in §12.1 pass, by script and by real mouse + keyboard.
+- [ ] Pricing (§12.2): every price shown is list price × 0.9 (per part), identical on the site, the catalogue PDFs and the Odoo export; checkout is full payment only — no deposit option, setting or wording; all 5 tests in §12.2 pass.
+- [ ] Order Summary (§6.5.1, §9 rule 12): the product list keeps one height in every totals state — tick / untick the VAT checkbox with ≥ 4 products in EN and VI at 768 / 1024 / 1280 / 1440px; the tallest card (with the button) stays on screen.
+- [ ] If present — Story section: the Gallery rule in §1.2 B holds for all 3 sets at 1440 / 1280 / 1100px (one strip height, 16px gaps, edge to edge, every trimmed/zoomed photo shows its main subject whole — screenshot each set); all 11 tests in §1.2 F pass (same tile height and 16px gaps in every set, main subjects whole, sets flush with the right edge, 2-line paragraph in EN and VI, click-only set change, 5s autoplay loop with pauses, same slide with reduced motion; one tile height for all sets).
 
 ---
 
@@ -674,6 +926,7 @@ Status after the alignment pass of 2026-09-24.
 | Catalogue size | 25.5 MB | ≤ 5 MB (§2) | Needs compressing (image downsampling) before launch — no PDF tool on the build machine |
 | Bank branch name | `VPBank - Chi nhanh Trung Son` (no accents) in bank-transfer settings | proper Vietnamese, unless it must match bank records | Needs a business decision (see `docs/translation-review-hyperion.md`) |
 | Product range strip / hero rotating image | not present | optional; if added, follow §11.2 | Not in the Hyperion brief |
+| Specs catalogue (§12.4) and Story section (§1.2) | not present — Hyperion keeps its supplied catalogue PDF and the Feature section | one-page EN + VI specs PDF built from the site data; Story variant optional | Not in the Hyperion brief; decide per product |
 | New catalogue SKUs (2,216, 9 new categories) | LIVE in the site data (2026-09-25) with images; official prices from `Hyperion_Products_Odoo_2_2.xlsx` applied 2026-09-28 (all 2,214 Odoo SKUs match) | — | Price changes: new Odoo export → `scripts/import-odoo-prices.mjs` → re-run the build |
 
 **Brought in line (reference implementation):**
@@ -692,5 +945,10 @@ Status after the alignment pass of 2026-09-24.
 | Checkout | Country → City / Province → Address; province dropdown for VN (34), US (51), CA (13), AU (8), MY (16); free text elsewhere; clear-on-change, keep-on-reselect; all 10 tests of §12.1 passed (scripted + real mouse/keyboard) | `src/checkout/regions.js`, `components/region-select.js`, `order-completion.js`, `checkout-store.js`, `order-draft.js` |
 | CONTACT SALES | three direct options (call, WhatsApp, Zalo) with icons; contact form removed; VI label "LIÊN HỆ SALES" (approved term) | `components/contact-options.js`, `header.css` |
 | Headings | balanced lines, no orphan words (`text-wrap: balance` / `pretty`) | `base.css` |
-| Footer | Handypad layout: "HYPERION by DLV CORPORATION" + tax code left, CONTACT / LIÊN HỆ right; no tagline, no About us column; VI page shows the Vietnamese address | `footer.js`, `footer.css`, `corporate.js`, `locale.js` |
-| Earlier fixes | smooth section scrolling (§11.1), Payment step uses the shared step styles (§6.6), no "Continue to payment" button, mobile order bar hidden until the first item, compact locked steps, 2-column Handypad-style footer with fixed copy (§10) | — |
+| Footer (§10) | one navy band on the waves; "Contact:" / "Liên hệ:" + five links (email, Handyman.vn, Facebook, WhatsApp, Zalo) right-aligned, last link on the content edge; one row from 768px, centred wrap on phones. **Hyperion value:** tablet links are 16px with a 14px gap (Be Vietnam Pro is wider than HandyPad's font, 18px / 20px would wrap at 768px) | `footer.js`, `footer.css`, `marine-theme.css` (`.footer-band`), `corporate.js` |
+| Zalo link | `corporate.zalo_href` = `https://zalo.me/84347099905` in the footer and CONTACT SALES (the Zalo OA link is gone) | `corporate.js`, `contact-options.js`, `footer.js` |
+| Pricing (§12.2) | every price = list × 0.9: `PRICE_FACTOR` in `src/main.js`, applied once when `products.json` loads (the JSON and `docs/price-list-new-skus.csv` keep list prices); 20 SKUs checked EN + VI | `src/main.js` |
+| Payment (§12.2, §12.3) | full payment only — no deposit option, setting or wording; rows = radio · square icon · name; PayPal on the USD page only; one `PAY` button; every pop-up shows "Amount due now" = order total | `checkout/config.js`, `order-draft.js`, `checkout-store.js`, `payment-service.js`, `order-completion.js`, `payment-modal.js`, `order-summary.js`, `checkout.css`, `assets/pay/`, `assets/paypal.png` |
+| VAT invoice (§12.1) | checkbox under Shipping address; Company + Tax code required while ticked (VN: 10 or 13 digits); kept across reload; all six tests passed in EN and VI | `order-draft.js`, `checkout-store.js`, `order-completion.js`, `checkout.css`, `locale.js` |
+| Order Summary list height (§12.2) | product list keeps one height while the totals area changes; the box grows at its bottom edge (fixed 2026-10-03 after the VAT checkbox made the list jump) | `order-summary.css` |
+| Earlier fixes | smooth section scrolling (§11.1), Payment step uses the shared step styles (§6.6), no "Continue to payment" button, mobile order bar hidden until the first item, compact locked steps | — |

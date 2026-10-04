@@ -49,7 +49,7 @@ export function createHeader() {
 
   const catalogue = element('a', 'header-section-link header-catalogue-link', t('CATALOGUE'));
   catalogue.href = `${baseURL}assets/hyperion-catalogue-en.pdf`;
-  catalogue.download = 'HYPERION-Marine-Safety-Signs-Catalogue.pdf';
+  catalogue.download = 'HYPERION-Safety-Signs-Catalogue.pdf';
   links.append(catalogue);
 
   // Contact sales opens the three direct contact options (phone, WhatsApp, Zalo) — no form.

@@ -78,7 +78,7 @@ export function createSignConstructionSection() {
 
   const catalogueLink = element('a', 'sign-construction-catalogue-link');
   catalogueLink.href = `${baseURL}assets/hyperion-catalogue-en.pdf`;
-  catalogueLink.download = 'HYPERION-Marine-Safety-Signs-Catalogue.pdf';
+  catalogueLink.download = 'HYPERION-Safety-Signs-Catalogue.pdf';
   catalogueLink.append(
     element('span', '', t('View Catalogue')),
     element('span', 'sign-construction-link-arrow', '→'),
@@ -92,7 +92,7 @@ export function createSignConstructionSection() {
   const visualPanel = element('figure', 'sign-construction-visual-panel');
   const visual = element('img', 'sign-construction-visual-image');
   visual.src = constructionVisualURL;
-  visual.alt = t('Layered Lower Rescue Boat marine safety sign showing Hyperion sign construction.');
+  visual.alt = t('Layered Lower Rescue Boat safety sign showing Hyperion sign construction.');
   visual.loading = 'lazy';
   visual.decoding = 'async';
 

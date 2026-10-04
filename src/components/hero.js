@@ -8,7 +8,7 @@ export function createHero() {
   const inner = element('div', 'container hero-inner');
   const copy = element('div', 'hero-copy');
   const eyebrow = element('p', 'eyebrow', 'HYPERION BY HANDYMAN');
-  const title = element('h1', '', t('Marine safety signs'));
+  const title = element('h1', '', t('Safety signs'));
   title.id = 'hero-title';
   title.append(element('span', 'hero-title-second', t('for onboard safety, emergency response and wayfinding.')));
   const actions = element('div', 'hero-actions');
@@ -23,7 +23,7 @@ export function createHero() {
   });
   const catalogue = element('a', 'button hero-action hero-action-secondary', t('Download catalogue'));
   catalogue.href = './assets/hyperion-catalogue-en.pdf';
-  catalogue.download = 'HYPERION-Marine-Safety-Signs-Catalogue.pdf';
+  catalogue.download = 'HYPERION-Safety-Signs-Catalogue.pdf';
   actions.append(find, catalogue);
   copy.append(eyebrow, title, actions);
 

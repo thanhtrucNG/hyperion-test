@@ -1,4 +1,4 @@
-import { AMOUNT_OPTIONS, PAYMENT_METHODS, CUSTOMER_FIELDS, SHIPPING_FIELDS, DRAFT_KEY, restoreDraft, validateContact, buildOrderDraft } from './order-draft.js';
+import { PAYMENT_METHODS, methodOffered, CUSTOMER_FIELDS, SHIPPING_FIELDS, DRAFT_KEY, restoreDraft, validateContact, buildOrderDraft } from './order-draft.js';
 import { PaymentServiceError, validatePaymentResponse } from './payment-service.js';
 import { countryByCode } from './countries.js';
 import { regionByCode, regionName } from './regions.js';
@@ -11,22 +11,14 @@ export function createCheckoutStore({ cart, storage, currency = 'USD', language 
   if (restoredRegion) fields.shipping.cityProvince = regionName(restoredRegion, language);
   const paymentMode = config.paymentMode === 'simulation' ? 'simulation' : 'live';
   let simulationStatus = 'idle';
-  const depositUSD = config.depositUSD ?? 5;
-  const amountAvailability = {
-    full: true,
-    deposit: currency === 'USD'
-      ? Number.isFinite(depositUSD) && depositUSD > 0
-      : Number.isSafeInteger(config.depositVND) && config.depositVND > 0,
-  };
-  const methodAvailability = Object.fromEntries(PAYMENT_METHODS.map(method => [method, paymentMode === 'simulation' || (Boolean(service.configured) && service.capabilities?.[method] === true)]));
-  // Restore contact data, but never restore a selected option that is unavailable now.
-  if (!amountAvailability[fields.amountOption]) fields.amountOption = null;
+  const methodAvailability = Object.fromEntries(PAYMENT_METHODS.map(method => [method, methodOffered(method, currency) && (paymentMode === 'simulation' || (Boolean(service.configured) && service.capabilities?.[method] === true))]));
+  // Restore contact data, but never restore a payment method that is unavailable now.
   if (!methodAvailability[fields.method]) fields.method = null;
   const listeners = new Set();
   let session = {}, revision = 0, busy = false, error = null;
   let attemptKey = null;
-  const draft = () => buildOrderDraft(cart.getItems(), fields, currency, config, session);
-  const fingerprint = () => JSON.stringify(buildOrderDraft(cart.getItems(), fields, currency, config));
+  const draft = () => buildOrderDraft(cart.getItems(), fields, currency, session);
+  const fingerprint = () => JSON.stringify(buildOrderDraft(cart.getItems(), fields, currency));
   try {
     const attempt = JSON.parse(storage?.getItem(ATTEMPT_KEY));
     if (paymentMode === 'live' && attempt?.fingerprint === fingerprint() && typeof attempt.key === 'string') {
@@ -42,11 +34,11 @@ export function createCheckoutStore({ cart, storage, currency = 'USD', language 
 
   function snapshot() {
     const order = draft();
-    const errors = validateContact(order.customer, order.shipping);
+    const errors = validateContact(order.customer, order.shipping, order.vatInvoice);
     const shippingUnlocked = order.items.length > 0;
     const paymentUnlocked = shippingUnlocked && Object.keys(errors).length === 0;
-    return { order, errors, shippingUnlocked, paymentUnlocked, busy, error, paymentMode, simulationStatus, configured: service.configured, amountAvailability, methodAvailability,
-      canPay: paymentUnlocked && order.payment.amountDueNow !== null && methodAvailability[fields.method] === true,
+    return { order, errors, shippingUnlocked, paymentUnlocked, busy, error, paymentMode, simulationStatus, configured: service.configured, methodAvailability,
+      canPay: paymentUnlocked && methodAvailability[fields.method] === true,
       checkoutURL: session.checkoutURL ?? null, bank: session.bank ?? null };
   }
   function publish() {
@@ -118,7 +110,8 @@ export function createCheckoutStore({ cart, storage, currency = 'USD', language 
       }
       invalidate();
     },
-    selectAmount(value) { if (AMOUNT_OPTIONS.includes(value) && amountAvailability[value] && fields.amountOption !== value) { fields.amountOption = value; invalidate(); } },
+    // Optional VAT invoice: when on, Company and Tax code become required (see validateContact).
+    setInvoice(value) { if (fields.wantsInvoice !== Boolean(value)) { fields.wantsInvoice = Boolean(value); invalidate(); } },
     selectMethod(value) { if (PAYMENT_METHODS.includes(value) && methodAvailability[value] && fields.method !== value) { fields.method = value; invalidate(); } },
     startPayment() {
       if (!snapshot().canPay || busy || (session.transactionId && session.status !== 'failed')) return Promise.resolve();
